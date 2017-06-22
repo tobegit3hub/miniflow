@@ -21,7 +21,7 @@ import tensorflow as tf
 
 sess = tf.Session()
 hello = tf.constant("Hello, TensorFlow!")
-sess.run(hello)
+print(sess.run(hello))
 # "Hello, TensorFlow!"
 ```
 
@@ -32,7 +32,7 @@ import miniflow.miniflow as tf
 
 sess = tf.Session()
 hello = tf.constant("Hello, MiniFlow!")
-sess.run(hello)
+print(sess.run(hello))
 # "Hello, MiniFlow!"
 ```
 
@@ -92,4 +92,14 @@ c = tf.add(a, b)
 print(sess.run(c, feed_dict={a: 10.0}))
 print(sess.run(c, feed_dict={a.name: 10.0}))
 # 42.0
+```
+
+## Release
+
+Upload the package of [miniflow](https://pypi.python.org/pypi/miniflow/) in [pypi](https://pypi.python.org/pypi).
+
+```
+python ./setup.py sdist --format=gztar
+
+twine upload dist/miniflow-x.x.x.tar.gz
 ```
