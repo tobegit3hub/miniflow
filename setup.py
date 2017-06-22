@@ -18,7 +18,7 @@ except ImportError:
   from distutils.core import setup
 
 setup(name="miniflow",
-      version="0.1.0",
+      version="0.1.1",
       author="tobe",
       license="Apache License",
       description="Minimal TensorFlow",

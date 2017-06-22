@@ -70,12 +70,13 @@ class Op(object):
 
 
 class PlaceholderOp(Op):
-  def __init__(self, name=None):
+  def __init__(self, dtype=None, name=None):
     if name == None:
       self.name = "Placeholder"
     else:
       self.name = name
 
+    self.dtype = dtype
     self.value = None
 
     self.graph = get_default_graph()
@@ -322,6 +323,14 @@ class MultipleOp(Op):
     for op in self.ops:
       result *= op.grad()
     return result
+
+
+# Compatible for TensorFlow APIs
+placeholder = PlaceholderOp
+constant = ConstantOp
+add = AddOp
+float32 = float
+float64 = float
 
 
 def main():
