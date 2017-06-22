@@ -2,10 +2,11 @@ import math
 import numpy as np
 import os
 import sys
-sys.path.append("../")
 
 import client
+
 if os.environ.has_key("ENABLE_SWIG_OP"):
+  sys.path.append("../")
   import swig.op
 
 
@@ -14,10 +15,10 @@ class Op(object):
     pass
 
   def forward(self):
-    pass
+    raise NotImplementedError
 
   def grad(self):
-    pass
+    raise NotImplementedError
 
 
 class PlaceholderOp(Op):

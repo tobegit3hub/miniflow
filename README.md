@@ -2,7 +2,12 @@
 
 ## Introduction
 
-It is the minimal implementation of [TensorFlow](https://github.com/tensorflow/tensorflow).
+MiniFlow aims to implement [TensorFlow](https://github.com/tensorflow/tensorflow) in minimal code.
+
+* Support autograd for composite operations
+* Support operations in C++ backend with swig
+* Support Placeholer and feed_dict parameter
+* Support same Graph/Session APIs as TensorFlow
 
 ## Installation
 
