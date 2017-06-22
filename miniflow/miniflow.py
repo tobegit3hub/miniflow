@@ -6,7 +6,6 @@ import numpy as np
 
 class Graph(object):
   def __init__(self):
-    print("Initialize graph")
     self.name_op_map = {}
 
   def get_unique_name(self, original_name):
@@ -36,6 +35,29 @@ def get_default_graph():
     return default_graph
 
 
+class Session(object):
+  def __init__(self):
+    pass
+
+  def run(self, op, feed_dict=None, options=None):
+
+    # Update the value of PlaceholerOp with feed_dict data
+    name_op_map = op.graph.name_op_map
+
+    if feed_dict != None:
+      # Example: {"Placeholer_1": 10} or {PlaceholderOp: 10}
+      for op_or_opname, value in feed_dict.items():
+        if isinstance(op_or_opname, str):
+          placeholder_op = name_op_map[op_or_opname]
+        else:
+          placeholder_op = op_or_opname
+        if isinstance(placeholder_op, PlaceholderOp):
+          placeholder_op.set_value(value)
+
+    result = op.forward()
+    return result
+
+
 class Op(object):
   def __init__(self):
     pass
@@ -53,16 +75,23 @@ class PlaceholderOp(Op):
       self.name = "Placeholder"
     else:
       self.name = name
+
     self.value = None
 
-    graph = get_default_graph()
-    graph.add_to_graph(self)
+    self.graph = get_default_graph()
+    self.graph.add_to_graph(self)
 
   def set_value(self, value):
     self.value = value
 
   def get_value(self):
     return self.value
+
+  def forward(self):
+    return self.value
+
+  def grad(self):
+    return 0
 
 
 # Notice: ConstantOp is different from the one of TensorFlow
@@ -72,11 +101,12 @@ class ConstantOp(Op):
       self.name = "Constant"
     else:
       self.name = name
+
     # Notice, self.x should be Number or PlaceholerOp
     self.x = x
 
-    graph = get_default_graph()
-    graph.add_to_graph(self)
+    self.graph = get_default_graph()
+    self.graph.add_to_graph(self)
 
   def forward(self):
     if isinstance(self.x, PlaceholderOp):
@@ -95,10 +125,11 @@ class CoefficientOp(Op):
       self.name = "Coefficient"
     else:
       self.name = name
+
     self.x = x
 
-    graph = get_default_graph()
-    graph.add_to_graph(self)
+    self.graph = get_default_graph()
+    self.graph.add_to_graph(self)
 
   def set_x(self, x):
     self.x = x
@@ -127,10 +158,11 @@ class VariableOp(Op):
       self.name = "Variable"
     else:
       self.name = name
+
     self.x = x
 
-    graph = get_default_graph()
-    graph.add_to_graph(self)
+    self.graph = get_default_graph()
+    self.graph.add_to_graph(self)
 
   def forward(self):
     if isinstance(self.x, PlaceholderOp):
@@ -156,10 +188,11 @@ class SquareOp(Op):
       self.name = "Square"
     else:
       self.name = name
+
     self.x = x
 
-    graph = get_default_graph()
-    graph.add_to_graph(self)
+    self.graph = get_default_graph()
+    self.graph.add_to_graph(self)
 
   def forward(self):
     if isinstance(self.x, PlaceholderOp):
@@ -189,10 +222,11 @@ class CubicOp(Op):
       self.name = "Cubic"
     else:
       self.name = name
+
     self.x = x
 
-    graph = get_default_graph()
-    graph.add_to_graph(self)
+    self.graph = get_default_graph()
+    self.graph.add_to_graph(self)
 
   def forward(self):
     if isinstance(self.x, PlaceholderOp):
@@ -225,8 +259,8 @@ def SigmoidOp(x):
 
     self.x = x
 
-    graph = get_default_graph()
-    graph.add_to_graph(self)
+    self.graph = get_default_graph()
+    self.graph.add_to_graph(self)
 
   def forward(self):
     if isinstance(self.x, PlaceholderOp):
@@ -251,8 +285,8 @@ class AddOp(Op):
     self.ops = ops
     self.name = None
 
-    graph = get_default_graph()
-    graph.add_to_graph(self)
+    self.graph = get_default_graph()
+    self.graph.add_to_graph(self)
 
   def forward(self):
     result = 0
@@ -274,8 +308,8 @@ class MultipleOp(Op):
     self.ops = ops
     self.name = None
 
-    graph = get_default_graph()
-    graph.add_to_graph(self)
+    self.graph = get_default_graph()
+    self.graph.add_to_graph(self)
 
   def forward(self):
     result = 1
@@ -288,16 +322,6 @@ class MultipleOp(Op):
     for op in self.ops:
       result *= op.grad()
     return result
-
-
-'''
->>> def tanh(x):                 # Define a function
-...     y = np.exp(-x)
-...     return (1.0 - y) / (1.0 + y)
-...
->>> grad_tanh = grad(tanh)       # Obtain its gradient function
->>> grad_tanh(1.0)               # Evaluate the gradient at x = 1.0
-'''
 
 
 def main():
@@ -421,6 +445,14 @@ def main():
         epoch_index, loss, grad, weights_value, predict))
 
   # Run with default graph
+  '''
+  def tanh(x):                 # Define a function
+    y = np.exp(-x)
+    return (1.0 - y) / (1.0 + y)
+
+  grad_tanh = grad(tanh)       # Obtain its gradient function
+  grad_tanh(1.0)               # Evaluate the gradient at x = 1.0
+  '''
 
   def myfunction_python(x):
     return x**2 + x
@@ -438,6 +470,43 @@ def main():
   myfunction_op = get_default_graph().name_op_map[myfunction_op_name]
   print("Run myfunction: {}, auto grad of myfucntion: {}".format(
       myfunction_op.forward(), myfunction_op.grad()))
+
+  # Run with session
+  ''' TensorFlow example
+  hello = tf.constant('Hello, TensorFlow!')
+  sess = tf.Session()
+  print(sess.run(hello))
+  a = tf.constant(10)
+  b = tf.constant(32)
+  c = tf.add(a, b)
+  print(sess.run(c))
+  '''
+
+  hello = ConstantOp("Hello, TensorFlow! -- by MinialFlow")
+  sess = Session()
+  print(sess.run(hello))
+  a = ConstantOp(10)
+  b = ConstantOp(32)
+  c = AddOp(a, b)
+  print(sess.run(c))
+
+  # Run with session and feed_dict
+  '''
+  
+  a = tf.placeholder(tf.float32)
+  b = tf.constant(32.0)
+  c = tf.add(a, b)
+  sess = tf.Session()
+  print(sess.run(c, feed_dict={a: 10}))
+  print(sess.run(c, feed_dict={a.name: 10}))
+  '''
+
+  a = PlaceholderOp()
+  b = ConstantOp(32)
+  c = AddOp(a, b)
+  sess = Session()
+  print(sess.run(c, feed_dict={a: 10}))
+  print(sess.run(c, feed_dict={a.name: 10}))
 
 
 if __name__ == "__main__":
