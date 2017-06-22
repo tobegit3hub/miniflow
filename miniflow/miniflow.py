@@ -2,6 +2,11 @@
 
 import math
 import numpy as np
+import os
+import sys
+sys.path.append("../")
+
+import swig.op
 
 
 class Graph(object):
@@ -200,7 +205,12 @@ class SquareOp(Op):
       x = self.x.get_value()
     else:
       x = self.x
-    return pow(x, 2)
+
+    if os.environ.has_key("DISABLE_SWIG_OP"):
+      result = pow(x, 2)
+    else:
+      result = swig.op.square(x)
+    return result
 
   def grad(self):
     if isinstance(self.x, PlaceholderOp):
@@ -234,14 +244,24 @@ class CubicOp(Op):
       x = self.x.get_value()
     else:
       x = self.x
-    return math.pow(x, 3)
+
+    if os.environ.has_key("DISABLE_SWIG_OP"):
+      result = math.pow(x, 3)
+    else:
+      result = swig.op.cubic(x)
+    return result
 
   def grad(self):
     if isinstance(self.x, PlaceholderOp):
       x = self.x.get_value()
     else:
       x = self.x
-    return 3 * math.pow(x, 2)
+
+    if os.environ.has_key("DISABLE_SWIG_OP"):
+      result = 3 * math.pow(x, 2)
+    else:
+      result = swig.op.multiple(3, swig.op.square(x))
+    return result
 
 
 def test_CubicOp():

@@ -18,9 +18,9 @@ except ImportError:
   from distutils.core import setup
 
 setup(name="miniflow",
-      version="0.1.1",
+      version="0.1.2",
       author="tobe",
       license="Apache License",
       description="Minimal TensorFlow",
       install_requires=["numpy"],
-      packages=["miniflow"])
+      packages=["miniflow", "swig"])
