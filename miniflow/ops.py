@@ -247,9 +247,28 @@ def SigmoidOp(x):
 
 # TODO: Composite op only supports linear combination
 class AddOp(Op):
+  def __init__(self, op1, op2):
+    self.name = "Add"
+    self.op1 = op1
+    self.op2 = op2
+    self.name = None
+
+    self.graph = client.get_default_graph()
+    self.graph.add_to_graph(self)
+
+  def forward(self):
+    result = self.op1.forward() + self.op2.forward()
+    return result
+
+  def grad(self):
+    result = self.op1.grad() + self.op2.grad()
+    return result
+
+
+class AddNOp(Op):
   def __init__(self, *ops):
     # TODO: Support user defined name in the parameter
-    self.name = "Add"
+    self.name = "AddN"
     self.ops = ops
     self.name = None
 
@@ -271,8 +290,27 @@ class AddOp(Op):
 
 # TODO: Can not support operations like "x * x", only "x * 3"
 class MultipleOp(Op):
-  def __init__(self, *ops):
+  def __init__(self, op1, op2):
     self.name = "Multiple"
+    self.op1 = op1
+    self.op2 = op2
+    self.name = None
+
+    self.graph = client.get_default_graph()
+    self.graph.add_to_graph(self)
+
+  def forward(self):
+    result = self.op1.forward() * self.op2.forward()
+    return result
+
+  def grad(self):
+    result = self.op1.grad() * self.op2.grad()
+    return result
+
+
+class MultipleNOp(Op):
+  def __init__(self, *ops):
+    self.name = "MultipleN"
     self.ops = ops
     self.name = None
 

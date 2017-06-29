@@ -23,7 +23,7 @@ def main():
   second_item = ops.MultipleOp(ops.CoefficientOp(2), ops.SquareOp(x))
   third_item = ops.VariableOp(x)
   forth_item = ops.ConstantOp(10)
-  y = ops.AddOp(ops.AddOp(first_item, second_item), third_item, forth_item)
+  y = ops.AddNOp(ops.AddOp(first_item, second_item), third_item, forth_item)
 
   # Should be "X: 1, forward: 16.0, grad: 14.0"
   print("X: {}, forward: {}, grad: {}".format(x, y.forward(), y.grad()))
@@ -38,8 +38,8 @@ def main():
   multiple2 = ops.MultipleOp(coefficient2, square1)
   variable1 = ops.VariableOp(x)
   constant1 = ops.ConstantOp(10)
-  add1 = ops.AddOp(multiple1, multiple2, variable1, constant1)
-  add2 = ops.AddOp(multiple1, multiple2)
+  add1 = ops.AddNOp(multiple1, multiple2, variable1, constant1)
+  add2 = ops.AddNOp(multiple1, multiple2)
 
   name_op_map["coefficient1"] = coefficient1
   name_op_map["cubic1"] = cubic1
@@ -68,7 +68,7 @@ def main():
   multiple2 = ops.MultipleOp(coefficient2, square1)
   variable1 = ops.VariableOp(x)
   constant1 = ops.ConstantOp(10)
-  add1 = ops.AddOp(multiple1, multiple2, variable1, constant1)
+  add1 = ops.AddNOp(multiple1, multiple2, variable1, constant1)
   add2 = ops.AddOp(multiple1, multiple2)
 
   name_op_map["coefficient1"] = coefficient1
@@ -110,7 +110,7 @@ def main():
   multiple2 = ops.MultipleOp(coefficient2, square1)
   variable1 = ops.VariableOp(x)
   constant1 = ops.ConstantOp(10)
-  add1 = ops.AddOp(multiple1, multiple2, variable1, constant1)
+  add1 = ops.AddNOp(multiple1, multiple2, variable1, constant1)
 
   for epoch_index in range(epoch_number):
 
