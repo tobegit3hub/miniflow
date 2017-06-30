@@ -13,6 +13,7 @@
 # limitations under the License.
 """This module contains all the basic operations."""
 
+import logging
 import math
 import numpy as np
 import os
@@ -22,6 +23,7 @@ import graph
 
 # Enable swig by environment variable
 if os.environ.has_key("ENABLE_SWIG_OP"):
+  logging.info("Enable swig operations by environment variable")
   sys.path.append("../")
   import swig.op
 

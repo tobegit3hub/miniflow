@@ -12,12 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 
 class Graph(object):
   def __init__(self):
     self.name_op_map = {}
 
     self.trainable_variables_collection = {}
+
+  def get_name_op_map(self):
+    return self.name_op_map
+
+  def get_trainable_variables_collection(self):
+    return self.trainable_variables_collection
+
+  def add_to_trainable_variables_collection(self, key, value):
+    if self.trainable_variables_collection.has_key(key):
+      logging.warning("The key: {} exists in trainable_variables_collection".format(key))
+    else:
+      self.trainable_variables_collection[key] = value
 
   def get_unique_name(self, original_name):
     index = 0
@@ -32,17 +45,6 @@ class Graph(object):
   def add_to_graph(self, op):
     op.name = self.get_unique_name(op.name)
     self.name_op_map[op.name] = op
-
-  def get_trainable_variables_collection(self):
-    return self.trainable_variables_collection
-
-  def add_to_trainable_variables_collection(self, key, value):
-    if self.trainable_variables_collection.has_key(key):
-      # TODO: Using logging
-      print("Warning, the key exists")
-    else:
-      self.trainable_variables_collection[key] = value
-
 
 # TODO: Make global variable for all packages
 default_graph = Graph()

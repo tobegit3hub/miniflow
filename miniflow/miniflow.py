@@ -15,7 +15,7 @@
 import client
 import ops
 
-# Compatible for TensorFlow APIs
+# Alias Miniflow APIs for TensorFlow APIs
 placeholder = ops.PlaceholderOp
 constant = ops.ConstantOp
 add = ops.AddOp

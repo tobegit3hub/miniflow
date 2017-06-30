@@ -16,13 +16,15 @@ import ops
 
 
 class Session(object):
+  """The session to run specified op from specified graph."""
+
   def __init__(self):
     pass
 
   def run(self, op, feed_dict=None, options=None):
 
     # Update the value of PlaceholerOp with feed_dict data
-    name_op_map = op.graph.name_op_map
+    name_op_map = op.graph.get_name_op_map()
 
     if feed_dict != None:
       # Example: {"Placeholer_1": 10} or {PlaceholderOp: 10}
@@ -31,6 +33,7 @@ class Session(object):
           placeholder_op = name_op_map[op_or_opname]
         else:
           placeholder_op = op_or_opname
+
         if isinstance(placeholder_op, ops.PlaceholderOp):
           placeholder_op.set_value(value)
 
