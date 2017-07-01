@@ -19,9 +19,9 @@ except ImportError:
 
 setup(
     name="miniflow",
-    version="0.1.5",
+    version="0.1.6",
     author="tobe",
     license="Apache License",
-    description="Minimal TensorFlow",
+    description="Minimal implementation of TensorFlow",
     install_requires=["numpy"],
     packages=["miniflow", "swig"])

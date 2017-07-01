@@ -32,8 +32,9 @@ def main():
     sess.run(c)
   end_time = time.time()
 
-  print("Result: {}".format(end_time - start_time)) # Almost 0.196532011032
+  print("Result: {}".format(end_time - start_time))  # Almost 0.196532011032
   print("End of benchmark")
+
 
 if __name__ == "__main__":
   main()

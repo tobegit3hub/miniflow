@@ -14,29 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import miniflow.miniflow as tf
+import tensorflow as tf
 
 
 def main():
   sess = tf.Session()
 
-  hello = tf.constant("Hello, MiniFlow!")
-  print(sess.run(hello))
-  # "Hello, MiniFlow!"
+  # Add
+  a = tf.constant(32.0)
+  b = tf.constant(10.0)
+  c = a + b
+  print(sess.run(c))  # Should be 42.0
 
-  a = tf.constant(10)
-  b = tf.constant(32)
-  c = tf.add(a, b)
-  print(sess.run(c))
-  # 42
+  # Minus
+  c = a - b
+  print(sess.run(c))  # Should be 22.0
 
-  sess = tf.Session()
-  a = tf.placeholder(tf.float32)
-  b = tf.constant(32.0)
-  c = tf.add(a, b)
-  print(sess.run(c, feed_dict={a: 10.0}))
-  print(sess.run(c, feed_dict={a.name: 10.0}))
-  # 42
+  # Multiple
+  c = a * b
+  print(sess.run(c))  # Should be 320.0
+
+  # Divide
+  c = a / b
+  print(sess.run(c))  # Should 3.2
 
 
 if __name__ == "__main__":

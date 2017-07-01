@@ -14,26 +14,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import tensorflow as tf
-import time
+import miniflow.miniflow as tf
 
 
 def main():
-  print("Start benchmark")
-  epoch_number = 100000
-
   sess = tf.Session()
-  a = tf.constant(10.0)
-  b = tf.constant(32.0)
+
+  # Add
+  a = tf.constant(32.0)
+  b = tf.constant(10.0)
   c = a + b
+  print(sess.run(c))  # Should be 42.0
 
-  start_time = time.time()
-  for i in range(epoch_number):
-    sess.run(c)
-  end_time = time.time()
+  # Minus
+  c = a - b
+  print(sess.run(c))  # Should be 22.0
 
-  print("Result: {}".format(end_time - start_time))  # Almost 0.196532011032
-  print("End of benchmark")
+  # Multiple
+  c = a * b
+  print(sess.run(c))  # Should be 320.0
+
+  # Divide
+  c = a / b
+  print(sess.run(c))  # Should 3.2
 
 
 if __name__ == "__main__":

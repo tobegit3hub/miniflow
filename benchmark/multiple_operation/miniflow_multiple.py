@@ -22,21 +22,22 @@ import time
 
 
 def main():
-    print("Start benchmark")
-    epoch_number = 100000
+  print("Start benchmark")
+  epoch_number = 100000
 
-    sess = tf.Session()
-    a = tf.constant(10.0)
-    b = tf.constant(32.0)
-    c = a * b
+  sess = tf.Session()
+  a = tf.constant(10.0)
+  b = tf.constant(32.0)
+  c = a * b
 
-    start_time = time.time()
-    for i in range(epoch_number):
-        sess.run(c)
-    end_time = time.time()
+  start_time = time.time()
+  for i in range(epoch_number):
+    sess.run(c)
+  end_time = time.time()
 
-    print("Result: {}".format(end_time - start_time)) # Almost 13.787735939
-    print("End of benchmark")
+  print("Result: {}".format(end_time - start_time))  # Almost 13.787735939
+  print("End of benchmark")
+
 
 if __name__ == "__main__":
-    main()
+  main()

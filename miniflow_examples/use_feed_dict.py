@@ -14,15 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import tensorflow as tf
+import miniflow.miniflow as tf
 
 
 def main():
-  sess = tf.Session()
-  a = tf.constant(10)
-  b = tf.constant(32)
+  a = tf.placeholder(tf.float32)
+  b = tf.constant(32.0)
   c = tf.add(a, b)
-  print(sess.run(c))
+
+  sess = tf.Session()
+  print(sess.run(c, feed_dict={a: 10}))
+  print(sess.run(c, feed_dict={a.name: 10}))
 
 
 if __name__ == "__main__":

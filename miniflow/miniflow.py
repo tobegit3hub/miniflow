@@ -16,7 +16,7 @@ import graph
 import session
 import ops
 
-# Alias Miniflow APIs for TensorFlow APIs
+# Alias MiniFlow APIs for TensorFlow APIs
 int32 = int
 float32 = float
 float64 = float
