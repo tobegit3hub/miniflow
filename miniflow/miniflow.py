@@ -17,6 +17,7 @@ import logging
 import graph
 import session
 import ops
+import optimizer
 
 # Alias Miniflow APIs for TensorFlow APIs
 float32 = float
@@ -27,9 +28,34 @@ Variable = ops.VariableOp
 placeholder = ops.PlaceholderOp
 constant = ops.ConstantOp
 add = ops.AddOp
+minus = ops.MinusOp
+multiple = ops.MultipleOp
+divide = ops.DivideOp
+
+import optimizer
 
 
 def main():
+  import optimizer
+  epoch_number = 3
+  learning_rate = 0.01
+
+  weights = ops.VariableOp(0.0)
+  x = ops.PlaceholderOp()
+  y = ops.PlaceholderOp()
+  predict = weights * x + 1
+  loss = y - predict
+  optimizer = optimizer.GradientDescentOptimizer(learning_rate)
+  train_op = optimizer.minimize(loss)
+
+  with session.Session() as sess:
+    for epoch_index in range(epoch_number):
+      #sess.run(train_op)
+      loss_value = sess.run(loss, feed_dict={x: 1.0, y: 11.0})
+      print("Current loss value: {}".format(loss_value))
+
+
+def main2():
   # y = 3 * x**3 + 2 * x**2 + x + 10
   # y' = 9 * x**2 + 4 * x + 1
   print("Formula: {}".format("y = 3 * x**3 + 2 * x**2 + x + 10"))
@@ -106,16 +132,6 @@ def main():
         epoch_index, loss, grad, weights_value, predict))
 
   # Run with session
-  ''' TensorFlow example
-  hello = tf.constant('Hello, TensorFlow!')
-  sess = tf.Session()
-  print(sess.run(hello))
-  a = tf.constant(10)
-  b = tf.constant(32)
-  c = tf.add(a, b)
-  print(sess.run(c))
-  '''
-
   hello = ops.ConstantOp("Hello, TensorFlow! -- by MinialFlow")
   sess = session.Session()
   print(sess.run(hello))
@@ -125,19 +141,9 @@ def main():
   print(sess.run(c))
 
   # Run with session and feed_dict
-  '''
-  
-  a = tf.placeholder(tf.float32)
-  b = tf.constant(32.0)
-  c = tf.add(a, b)
-  sess = tf.Session()
-  print(sess.run(c, feed_dict={a: 10}))
-  print(sess.run(c, feed_dict={a.name: 10}))
-  '''
-
   a = ops.PlaceholderOp()
   b = ops.ConstantOp(32)
-  c = ops.AddOp(a, b)
+  c = a + b
   sess = Session()
   print(sess.run(c, feed_dict={a: 10}))
   print(sess.run(c, feed_dict={a.name: 10}))
@@ -165,6 +171,7 @@ def main():
   print(sess.run(a - b))
   print(sess.run(a * b))
   print(sess.run(a / b))
+
 
 if __name__ == "__main__":
   main()

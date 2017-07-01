@@ -21,6 +21,13 @@ class Session(object):
   def __init__(self):
     pass
 
+  def __enter__(self):
+    """Support with statement."""
+    return self
+
+  def __exit__(self, type, value, trace):
+    pass
+
   def run(self, op, feed_dict=None, options=None):
 
     # Update the value of PlaceholerOp with feed_dict data
