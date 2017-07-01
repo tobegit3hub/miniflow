@@ -27,12 +27,13 @@ def main():
   epoch_number = 10
   learning_rate = 0.01
   train_features = [1.0, 2.0, 3.0, 4.0, 5.0]
-  train_labels = [11.0, 21.0, 31.0, 41.0, 51.0]
+  train_labels = [10.0, 20.0, 30.0, 40.0, 50.0]
 
   weights = ops.VariableOp(0.0)
+  bias = ops.VariableOp(0.0)
   x = ops.PlaceholderOp()
   y = ops.PlaceholderOp()
-  predict = weights * x + 1
+  predict = weights * x + bias
   loss = y - predict
   sgd_optimizer = optimizer.GradientDescentOptimizer(learning_rate)
   train_op = sgd_optimizer.minimize(loss)
@@ -47,15 +48,39 @@ def main():
       # Update model variables and print loss
       sess.run(train_op, feed_dict={x: train_feature, y: train_label})
       loss_value = sess.run(loss, feed_dict={x: 1.0, y: 10.0})
-      print("Epoch: {}, loss: {}, the weight: {}".format(
-          epoch_index, loss_value, weights.get_value()))
-
-
-if __name__ == "__main__":
-  main()
+      print("Epoch: {}, loss: {}, weight: {}, bias: {}".format(
+          epoch_index, loss_value, weights.get_value(), bias.get_value()))
 
 
 def main2():
+  epoch_number = 10
+  learning_rate = 0.01
+  train_features = [1.0, 2.0, 3.0, 4.0, 5.0]
+  train_labels = [10.0, 20.0, 30.0, 40.0, 50.0]
+
+  weights = ops.VariableOp(0.0)
+  x = ops.PlaceholderOp()
+  y = ops.PlaceholderOp()
+  predict = weights * x
+  loss = y - predict
+  sgd_optimizer = optimizer.GradientDescentOptimizer(learning_rate)
+  train_op = sgd_optimizer.minimize(loss)
+
+  with session.Session() as sess:
+    for epoch_index in range(epoch_number):
+      # Take one sample from train dataset
+      sample_number = len(train_features)
+      train_feature = train_features[epoch_index % sample_number]
+      train_label = train_labels[epoch_index % sample_number]
+
+      # Update model variables and print loss
+      sess.run(train_op, feed_dict={x: train_feature, y: train_label})
+      loss_value = sess.run(loss, feed_dict={x: 1.0, y: 10.0})
+      print("Epoch: {}, loss: {}, weight: {}".format(epoch_index, loss_value,
+                                                     weights.get_value()))
+
+
+def main1():
   # y = 3 * x**3 + 2 * x**2 + x + 10
   # y' = 9 * x**2 + 4 * x + 1
   print("Formula: {}".format("y = 3 * x**3 + 2 * x**2 + x + 10"))
@@ -67,6 +92,8 @@ def main2():
   third_item = ops.VariableOp(x)
   forth_item = ops.ConstantOp(10)
   y = ops.AddNOp(ops.AddOp(first_item, second_item), third_item, forth_item)
+
+  #import ipdb;ipdb.set_trace()
 
   # Should be "X: 1, forward: 16.0, grad: 14.0"
   print("X: {}, forward: {}, grad: {}".format(x, y.forward(), y.grad()))
@@ -99,7 +126,7 @@ def main2():
                                                 name_op_map["add1"].grad()))
   print("add2 forward: {}, backward: {}".format(name_op_map["add2"].forward(),
                                                 name_op_map["add2"].grad()))
-
+  '''
   # Automatically update weights with gradient
   learning_rate = 0.01
   epoch_number = 10
@@ -128,6 +155,7 @@ def main2():
     loss = predict - label
     print("Epoch: {}, loss: {}, grad: {}, weights: {}, predict: {}".format(
         epoch_index, loss, grad, weights_value, predict))
+  '''
 
   # Run with session
   hello = ops.ConstantOp("Hello, TensorFlow! -- by MinialFlow")
@@ -142,7 +170,7 @@ def main2():
   a = ops.PlaceholderOp()
   b = ops.ConstantOp(32)
   c = a + b
-  sess = Session()
+  sess = session.Session()
   print(sess.run(c, feed_dict={a: 10}))
   print(sess.run(c, feed_dict={a.name: 10}))
 
@@ -169,3 +197,7 @@ def main2():
   print(sess.run(a - b))
   print(sess.run(a * b))
   print(sess.run(a / b))
+
+
+if __name__ == "__main__":
+  main()
