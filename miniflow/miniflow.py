@@ -12,16 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import client
+import logging
+
+import graph
+import session
 import ops
 
 # Alias Miniflow APIs for TensorFlow APIs
+float32 = float
+float64 = float
+Graph = graph.Graph
+Session = session.Session
+Variable = ops.VariableOp
 placeholder = ops.PlaceholderOp
 constant = ops.ConstantOp
 add = ops.AddOp
-float32 = float
-float64 = float
-Session = client.Session
+
 
 
 def main():
@@ -112,7 +118,7 @@ def main():
   '''
 
   hello = ops.ConstantOp("Hello, TensorFlow! -- by MinialFlow")
-  sess = client.Session()
+  sess = session.Session()
   print(sess.run(hello))
   a = ops.ConstantOp(10)
   b = ops.ConstantOp(32)

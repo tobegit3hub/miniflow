@@ -14,6 +14,7 @@
 
 import logging
 
+
 class Graph(object):
   def __init__(self):
     self.name_op_map = {}
@@ -28,7 +29,8 @@ class Graph(object):
 
   def add_to_trainable_variables_collection(self, key, value):
     if self.trainable_variables_collection.has_key(key):
-      logging.warning("The key: {} exists in trainable_variables_collection".format(key))
+      logging.warning(
+          "The key: {} exists in trainable_variables_collection".format(key))
     else:
       self.trainable_variables_collection[key] = value
 
@@ -45,6 +47,7 @@ class Graph(object):
   def add_to_graph(self, op):
     op.name = self.get_unique_name(op.name)
     self.name_op_map[op.name] = op
+
 
 # TODO: Make global variable for all packages
 default_graph = Graph()

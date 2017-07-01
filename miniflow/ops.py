@@ -217,27 +217,6 @@ def SigmoidOp(x):
     return forward(x) / (1 - forward(x))
 
 
-'''
-def get_real_value(input):
-  """Get the real value of the operation.
-
-  Args:
-    input: May be primitive, ConstantOp, PlaceholerOp or VariableOp.
-    
-  Returns:
-    The primitive value from the input operation.
-  """
-  if isinstance(input, ConstantOp) or isinstance(input, PlaceholderOp) or isinstance(input, VariableOp):
-    value = input.get_value()
-  else:
-    value = input
-  return value
-
-def test_get_real_value():
-  print(get_real_value(10))
-'''
-
-
 class AddOp(Op):
   """
   The addition operation which has only two inputs. The input can be
@@ -268,6 +247,34 @@ class AddOp(Op):
     result = self.op1.grad() + self.op2.grad()
     return result
 
+class MinusOp(Op):
+  """
+  The minus operation.
+  """
+
+  def __init__(self, input1, input2, name="Minus"):
+    if not isinstance(input1, Op):
+      self.op1 = ConstantOp(input1)
+    else:
+      self.op1 = input1
+
+    if not isinstance(input2, Op):
+      self.op2 = ConstantOp(input2)
+    else:
+      self.op2 = input2
+
+    self.name = name
+
+    self.graph = graph.get_default_graph()
+    self.graph.add_to_graph(self)
+
+  def forward(self):
+    result = self.op1.forward() - self.op2.forward()
+    return result
+
+  def grad(self):
+    result = self.op1.grad() - self.op2.grad()
+    return result
 
 class AddNOp(Op):
   def __init__(self, *inputs):
