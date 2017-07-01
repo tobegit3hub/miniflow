@@ -40,6 +40,30 @@ class Op(object):
   def grad(self):
     raise NotImplementedError
 
+  def __add__(self, other):
+    return AddOp(self, other)
+
+  def __radd__(self, other):
+    return AddOp(other, self)
+
+  def __sub__(self, other):
+    return MinusOp(self, other)
+
+  def __rsub__(self, other):
+    return MinusOp(other, self)
+
+  def __mul__(self, other):
+    return MultipleOp(self, other)
+
+  def __rmul__(self, other):
+    return MultipleOp(other, self)
+
+  def __div__(self, other):
+    return DivideOp(self, other)
+
+  def __rdiv__(self, other):
+    return DivideOp(other, self)
+
 
 class PlaceholderOp(Op):
   """The placeholer operation which value is set when Session.run()"""
@@ -247,6 +271,7 @@ class AddOp(Op):
     result = self.op1.grad() + self.op2.grad()
     return result
 
+
 class MinusOp(Op):
   """
   The minus operation.
@@ -275,6 +300,7 @@ class MinusOp(Op):
   def grad(self):
     result = self.op1.grad() - self.op2.grad()
     return result
+
 
 class AddNOp(Op):
   def __init__(self, *inputs):
@@ -353,6 +379,32 @@ class MultipleNOp(Op):
     result = 1
     for op in self.ops:
       result *= op.grad()
+    return result
+
+
+class DivideOp(Op):
+  def __init__(self, input1, input2, name="Divide"):
+    if not isinstance(input1, Op):
+      self.op1 = ConstantOp(input1)
+    else:
+      self.op1 = input1
+
+    if not isinstance(input2, Op):
+      self.op2 = ConstantOp(input2)
+    else:
+      self.op2 = input2
+
+    self.name = name
+
+    self.graph = graph.get_default_graph()
+    self.graph.add_to_graph(self)
+
+  def forward(self):
+    result = self.op1.forward() / self.op2.forward()
+    return result
+
+  def grad(self):
+    result = self.op1.grad() / self.op2.grad()
     return result
 
 

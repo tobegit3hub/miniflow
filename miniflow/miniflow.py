@@ -29,7 +29,6 @@ constant = ops.ConstantOp
 add = ops.AddOp
 
 
-
 def main():
   # y = 3 * x**3 + 2 * x**2 + x + 10
   # y' = 9 * x**2 + 4 * x + 1
@@ -143,6 +142,29 @@ def main():
   print(sess.run(c, feed_dict={a: 10}))
   print(sess.run(c, feed_dict={a.name: 10}))
 
+  # Run with python operators
+  a = ops.ConstantOp(32.0)
+  b = ops.ConstantOp(10.0)
+  print(sess.run(a + b))
+  print(sess.run(a - b))
+  print(sess.run(a * b))
+  print(sess.run(a / b))
+
+  # Operate with primitive variables
+  a = ops.ConstantOp(32.0)
+  b = 10.0
+  print(sess.run(a + b))
+  print(sess.run(a - b))
+  print(sess.run(a * b))
+  print(sess.run(a / b))
+
+  # Operate by primitive variables
+  a = 32.0
+  b = ops.ConstantOp(10.0)
+  print(sess.run(a + b))
+  print(sess.run(a - b))
+  print(sess.run(a * b))
+  print(sess.run(a / b))
 
 if __name__ == "__main__":
   main()
