@@ -17,10 +17,11 @@ try:
 except ImportError:
   from distutils.core import setup
 
-setup(name="miniflow",
-      version="0.1.4",
-      author="tobe",
-      license="Apache License",
-      description="Minimal TensorFlow",
-      install_requires=["numpy"],
-      packages=["miniflow", "swig"])
+setup(
+    name="miniflow",
+    version="0.1.5",
+    author="tobe",
+    license="Apache License",
+    description="Minimal TensorFlow",
+    install_requires=["numpy"],
+    packages=["miniflow", "swig"])

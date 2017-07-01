@@ -173,7 +173,7 @@ class SquareOp(Op):
       result = pow(self.op.forward(), 2)
     return result
 
-  def grad(self):
+  def grad(self, partial_derivative_opname=None):
     return 2 * self.op.forward()
 
 
@@ -203,7 +203,7 @@ class CubicOp(Op):
       result = math.pow(self.op.forward(), 3)
     return result
 
-  def grad(self):
+  def grad(self, partial_derivative_opname=None):
     if os.environ.has_key("ENABLE_SWIG_OP"):
       result = swig.op.multiple(3, swig.op.square(self.op.forward()))
     else:
@@ -218,27 +218,9 @@ def test_CubicOp():
       x, variable.forward(), variable.grad()))
 
 
-def SigmoidOp(x):
-  def __init__(self, x, name="Sigmoid"):
-    self.name = name
-    self.x = x
-
-    self.graph = graph.get_default_graph()
-    self.graph.add_to_graph(self)
-
-  def forward(self):
-    if isinstance(self.x, PlaceholderOp):
-      x = self.x.get_value()
-    else:
-      x = self.x
-    return 1.0 / (1 + np.exp(-x))
-
-  def grad(self):
-    if isinstance(self.x, PlaceholderOp):
-      x = self.x.get_value()
-    else:
-      x = self.x
-    return forward(x) / (1 - forward(x))
+def SigmoidOp(Op):
+  def __init__(self, value, name="Sigmoid"):
+    pass
 
 
 class AddOp(Op):
@@ -267,7 +249,7 @@ class AddOp(Op):
     result = self.op1.forward() + self.op2.forward()
     return result
 
-  def grad(self):
+  def grad(self, partial_derivative_opname=None):
     result = self.op1.grad() + self.op2.grad()
     return result
 
@@ -297,7 +279,7 @@ class MinusOp(Op):
     result = self.op1.forward() - self.op2.forward()
     return result
 
-  def grad(self):
+  def grad(self, partial_derivative_opname=None):
     result = self.op1.grad() - self.op2.grad()
     return result
 
@@ -322,7 +304,7 @@ class AddNOp(Op):
       result += op.forward()
     return result
 
-  def grad(self):
+  def grad(self, partial_derivative_opname=None):
     result = 0
     for op in self.ops:
       result += op.grad()
@@ -351,12 +333,41 @@ class MultipleOp(Op):
     result = self.op1.forward() * self.op2.forward()
     return result
 
-  def grad(self):
-    result = self.op1.grad() * self.op2.grad()
+  def grad(self, partial_derivative_opname=None):
+
+    if isinstance(self.op1, PlaceholderOp) or isinstance(self.op1, ConstantOp):
+      # op1 is the coefficient of this formula
+      op1_grad = self.op1.get_value()
+
+      if isinstance(self.op2, PlaceholderOp) or isinstance(
+          self.op2, ConstantOp):
+        # two elements are both constant values
+        op2_grad = 0
+      else:
+        # op2 may has VariableOp
+        op2_grad = self.op2.grad()
+
+    elif isinstance(self.op2, PlaceholderOp) or isinstance(
+        self.op2, ConstantOp):
+      # op2 is the coefficient of this formula
+      op2_grad = self.op2.get_value()
+
+      # op1 may has VariableOp
+      op1_grad = self.op1.grad()
+
+    else:
+      # op1 and op2 may has VariableOp
+      logging.error(
+          "Not support complex formula which has multiple VariableOp")
+      raise NotImplementedError
+
+    result = op1_grad * op2_grad
     return result
 
 
 class MultipleNOp(Op):
+  """The multiple operation for n inputs."""
+
   def __init__(self, *inputs):
     self.name = "MultipleN"
 
@@ -375,7 +386,8 @@ class MultipleNOp(Op):
       result *= op.forward()
     return result
 
-  def grad(self):
+  def grad(self, partial_derivative_opname=None):
+    # TODO: Check the type of op to compute gradients
     result = 1
     for op in self.ops:
       result *= op.grad()
@@ -403,7 +415,7 @@ class DivideOp(Op):
     result = self.op1.forward() / self.op2.forward()
     return result
 
-  def grad(self):
+  def grad(self, partial_derivative_opname=None):
     result = self.op1.grad() / self.op2.grad()
     return result
 
