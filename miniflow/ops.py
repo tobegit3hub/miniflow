@@ -43,7 +43,7 @@ class Op(object):
     return AddOp(self, other)
 
   def __radd__(self, other):
-    return AddOp(other, self)
+    return self.__add__(other)
 
   def __sub__(self, other):
     return MinusOp(self, other)
@@ -55,7 +55,7 @@ class Op(object):
     return MultipleOp(self, other)
 
   def __rmul__(self, other):
-    return MultipleOp(other, self)
+    return self.__mul__(other)
 
   def __div__(self, other):
     return DivideOp(self, other)

@@ -7,7 +7,7 @@ MiniFlow is the numerical computation library which implements [TensorFlow](http
 * Support math calculations and composited operations
 * Support automatic partial derivative and chain rule
 * Support operations in C++/Python backends with swig
-* Support lazy evaluation with computation graph
+* Support imperative and declarative computations
 * Support the compatiable APIs with TensorFlow
 
 ## Installation
