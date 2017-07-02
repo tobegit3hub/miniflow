@@ -46,5 +46,4 @@ RUN apt-get install -y vim
 # Install MiniFlow
 RUN pip install miniflow
 
-
 CMD ["bash"]
