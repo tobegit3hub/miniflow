@@ -188,22 +188,14 @@ class SquareOp(Op):
     elif isinstance(self.op, VariableOp):
       # op is the variable
       if os.environ.has_key("ENABLE_SWIG_OP"):
-        grad = swig.op.multiple(2, self.op.get_value())
+        grad = swig.op.multiple(2, self.op.forward())
       else:
-        grad = 2 * self.op.get_value()
+        grad = 2 * self.op.forward()
     else:
-      # op is other complex operation
-      logging.error("Not support complex formula for SquareOp")
-      raise NotImplementedError
+      # op is other complex operation and use chain rule
+      grad = 2 * self.op.forward() * self.op.grad(partial_derivative_opname)
 
     return grad
-
-
-def test_SquareOp():
-  x = 10
-  variable = SquareOp(x)
-  print("X: {}, forward: {}, grad: {}".format(
-      x, variable.forward(), variable.grad()))
 
 
 class CubicOp(Op):
@@ -234,11 +226,10 @@ class CubicOp(Op):
       if os.environ.has_key("ENABLE_SWIG_OP"):
         grad = swig.op.multiple(3, swig.op.square(self.op.forward()))
       else:
-        grad = 3 * math.pow(self.op.get_value(), 2)
+        grad = 3 * math.pow(self.op.forward(), 2)
     else:
       # op is other complex operation
-      logging.error("Not support complex formula for CubicOp")
-      raise NotImplementedError
+      grad = 3 * math.pow(self.op.forward(), 2) * self.op.grad(partial_derivative_opname)
 
     return grad
 
@@ -371,7 +362,7 @@ class MultipleOp(Op):
 
     if isinstance(self.op1, PlaceholderOp) or isinstance(self.op1, ConstantOp):
       # op1 is the coefficient of this formula
-      op1_grad = self.op1.get_value()
+      op1_grad = self.op1.forward()
 
       if isinstance(self.op2, PlaceholderOp) or isinstance(
           self.op2, ConstantOp):
@@ -384,7 +375,7 @@ class MultipleOp(Op):
     elif isinstance(self.op2, PlaceholderOp) or isinstance(
         self.op2, ConstantOp):
       # op2 is the coefficient of this formula
-      op2_grad = self.op2.get_value()
+      op2_grad = self.op2.forward()
 
       # op1 may has VariableOp
       op1_grad = self.op1.grad(partial_derivative_opname)
@@ -484,3 +475,16 @@ class UpdateVariableNOp(Op):
     for variableOp, value in enumerate(self.variableop_value_map):
       variableOp.set_value(value)
     return self.variableop_value_map
+
+
+def test_SquareOp():
+  w = VariableOp(10)
+  b = VariableOp(20)
+  x = PlaceholderOp(float)
+  x.set_value(2.0)
+  y = PlaceholderOp(float)
+  y.set_value(3.0)
+
+  loss =  SquareOp(y - (w * x + b))
+  print("w: {}, forward: {}, grad: {}".format(w.get_value(), loss.forward(), loss.grad(w.name))) # 148.0
+  print("b: {}, forward: {}, grad: {}".format(b.get_value(), loss.forward(), loss.grad(b.name))) # 74.0

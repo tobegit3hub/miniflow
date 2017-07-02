@@ -29,3 +29,4 @@ add = ops.AddOp
 minus = ops.MinusOp
 multiple = ops.MultipleOp
 divide = ops.DivideOp
+square = ops.SquareOp
