@@ -25,7 +25,7 @@ docker run -it tobegit3hub/miniflow bash
 
 ## Usage
 
-MiniFlow has compatiable APIs with TensorFlow and please refer to [tensorflow_examples](./tensorflow_examples) and [miniflow_examples](./miniflow_examples).
+MiniFlow has compatiable APIs with TensorFlow and please refer to [examples](./examples) for more usage.
 
 ![](./images/basic_operations.png)
 
