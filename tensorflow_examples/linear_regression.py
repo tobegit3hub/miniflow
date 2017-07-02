@@ -45,10 +45,8 @@ def linear_regression():
       # Update model variables and print loss
       sess.run(train_op, feed_dict={x: train_feature, y: train_label})
       loss_value = sess.run(loss, feed_dict={x: 1.0, y: 10.0})
-      weights_value = sess.run(weights)
-      bias_value = sess.run(bias)
       print("Epoch: {}, loss: {}, weight: {}, bias: {}".format(
-          epoch_index, loss_value, weights_value, bias_value))
+          epoch_index, loss_value, sess.run(weights), sess.run(bias)))
 
 
 def main():

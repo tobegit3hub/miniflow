@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Copyright 2017 The Authors. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +14,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import graph
-import session
-import ops
+import miniflow.miniflow as tf
 
-# Alias MiniFlow APIs for TensorFlow APIs, import miniflow.miniflow as tf
-int32 = int
-float32 = float
-float64 = float
-Graph = graph.Graph
-Session = session.Session
-Variable = ops.VariableOp
-placeholder = ops.PlaceholderOp
-constant = ops.ConstantOp
-add = ops.AddOp
-minus = ops.MinusOp
-multiple = ops.MultipleOp
-divide = ops.DivideOp
+
+def main():
+  sess = tf.Session()
+
+  hello = tf.constant("Hello, MiniFlow!")
+  print(sess.run(hello))
+  # "Hello, MiniFlow!"
+
+  a = tf.constant(10)
+  b = tf.constant(32)
+  c = tf.add(a, b)
+  print(sess.run(c))
+  # 42
+
+  sess = tf.Session()
+  a = tf.placeholder(tf.float32)
+  b = tf.constant(32.0)
+  c = tf.add(a, b)
+  print(sess.run(c, feed_dict={a: 10.0}))
+  print(sess.run(c, feed_dict={a.name: 10.0}))
+  # 42
+
+
+if __name__ == "__main__":
+  main()
