@@ -25,7 +25,7 @@ docker run -it tobegit3hub/miniflow bash
 
 ## Usage
 
-MiniFlow has the compatiable APIs with TensorFlow. Please refer to [tensorflow_examples](./tensorflow_examples) and [miniflow_examples](./miniflow_examples) for more usage.
+MiniFlow has compatiable APIs with TensorFlow and please refer to [tensorflow_examples](./tensorflow_examples) and [miniflow_examples](./miniflow_examples).
 
 ![](./images/basic_operations.png)
 
@@ -55,9 +55,9 @@ import miniflow.miniflow as tf
 
 sess = tf.Session()
 
-hello = tf.constant("Hello, TensorFlow!")
+hello = tf.constant("Hello, MiniFlow!")
 sess.run(hello)
-# "Hello, TensorFlow!"
+# "Hello, MiniFlow!"
 
 a = tf.constant(10)
 b = tf.constant(32)
@@ -178,9 +178,9 @@ We have more performance tests in [benchmark](./benchmark/).
 
 ## Contribution
 
-GitHub issues and pull-requests are highly appreciated and feel free make your contribution.
+GitHub issues and pull-requests are highly appreciated and feel free to make your contribution.
 
-Release to upload the package of [miniflow](https://pypi.python.org/pypi/miniflow/) in [pypi](https://pypi.python.org/pypi).
+Release to upload the official python package of [miniflow](https://pypi.python.org/pypi/miniflow/) in [pypi](https://pypi.python.org/pypi).
 
 ```
 python ./setup.py sdist --format=gztar
