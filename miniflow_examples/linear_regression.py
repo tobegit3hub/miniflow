@@ -25,36 +25,6 @@ def linear_regression():
   train_features = [1.0, 2.0, 3.0, 4.0, 5.0]
   train_labels = [10.0, 20.0, 30.0, 40.0, 50.0]
 
-  weights = miniflow.ops.VariableOp(0.0)
-  bias = miniflow.ops.VariableOp(0.0)
-  x = miniflow.ops.PlaceholderOp(float)
-  y = miniflow.ops.PlaceholderOp(float)
-
-  predict = weights * x + bias
-  loss = y - predict
-  sgd_optimizer = miniflow.optimizer.GradientDescentOptimizer(learning_rate)
-  train_op = sgd_optimizer.minimize(loss)
-
-  with miniflow.session.Session() as sess:
-    for epoch_index in range(epoch_number):
-      # Take one sample from train dataset
-      sample_number = len(train_features)
-      train_feature = train_features[epoch_index % sample_number]
-      train_label = train_labels[epoch_index % sample_number]
-
-      # Update model variables and print loss
-      sess.run(train_op, feed_dict={x: train_feature, y: train_label})
-      loss_value = sess.run(loss, feed_dict={x: 1.0, y: 10.0})
-      print("Epoch: {}, loss: {}, weight: {}, bias: {}".format(
-          epoch_index, loss_value, weights.get_value(), bias.get_value()))
-
-
-def linear_regression_with_tf():
-  epoch_number = 10
-  learning_rate = 0.01
-  train_features = [1.0, 2.0, 3.0, 4.0, 5.0]
-  train_labels = [10.0, 20.0, 30.0, 40.0, 50.0]
-
   weights = tf.Variable(0.0)
   bias = tf.Variable(0.0)
   x = tf.placeholder(tf.float32)
@@ -66,6 +36,38 @@ def linear_regression_with_tf():
   train_op = sgd_optimizer.minimize(loss)
 
   with tf.Session() as sess:
+
+    for epoch_index in range(epoch_number):
+      # Take one sample from train dataset
+      sample_number = len(train_features)
+      train_feature = train_features[epoch_index % sample_number]
+      train_label = train_labels[epoch_index % sample_number]
+
+      # Update model variables and print loss
+      sess.run(train_op, feed_dict={x: train_feature, y: train_label})
+      loss_value = sess.run(loss, feed_dict={x: 1.0, y: 10.0})
+      print("Epoch: {}, loss: {}, weight: {}, bias: {}".format(
+          epoch_index, loss_value, sess.run(weights), sess.run(bias)))
+
+
+def linear_regression_raw_api():
+  epoch_number = 10
+  learning_rate = 0.01
+  train_features = [1.0, 2.0, 3.0, 4.0, 5.0]
+  train_labels = [10.0, 20.0, 30.0, 40.0, 50.0]
+
+  weights = miniflow.ops.VariableOp(0.0)
+  bias = miniflow.ops.VariableOp(0.0)
+  x = miniflow.ops.PlaceholderOp(float)
+  y = miniflow.ops.PlaceholderOp(float)
+
+  predict = weights * x + bias
+  loss = y - predict
+  sgd_optimizer = miniflow.optimizer.GradientDescentOptimizer(learning_rate)
+  train_op = sgd_optimizer.minimize(loss)
+
+  with miniflow.session.Session() as sess:
+
     for epoch_index in range(epoch_number):
       # Take one sample from train dataset
       sample_number = len(train_features)
@@ -81,7 +83,7 @@ def linear_regression_with_tf():
 
 def main():
   linear_regression()
-  # linear_regression_with_tf()
+  # linear_regression_raw_api()
 
 
 if __name__ == "__main__":
