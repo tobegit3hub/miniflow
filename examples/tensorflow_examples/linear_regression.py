@@ -17,8 +17,11 @@
 import tensorflow as tf
 
 
-def linear_regression():
-  epoch_number = 30
+def linear_regression(customized_epoch_number=None, verbose=True):
+  if customized_epoch_number == None:
+    epoch_number = 30
+  else:
+    epoch_number = customized_epoch_number
   learning_rate = 0.01
   train_features = [1.0, 2.0, 3.0, 4.0, 5.0]
   train_labels = [10.0, 20.0, 30.0, 40.0, 50.0]
@@ -45,8 +48,10 @@ def linear_regression():
       # Update model variables and print loss
       sess.run(train_op, feed_dict={x: train_feature, y: train_label})
       loss_value = sess.run(loss, feed_dict={x: 1.0, y: 10.0})
-      print("Epoch: {}, loss: {}, weight: {}, bias: {}".format(
-          epoch_index, loss_value, sess.run(weights), sess.run(bias)))
+
+      if verbose:
+        print("Epoch: {}, loss: {}, weight: {}, bias: {}".format(
+            epoch_index, loss_value, sess.run(weights), sess.run(bias)))
 
 
 def main():

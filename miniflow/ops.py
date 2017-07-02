@@ -229,7 +229,8 @@ class CubicOp(Op):
         grad = 3 * math.pow(self.op.forward(), 2)
     else:
       # op is other complex operation
-      grad = 3 * math.pow(self.op.forward(), 2) * self.op.grad(partial_derivative_opname)
+      grad = 3 * math.pow(self.op.forward(),
+                          2) * self.op.grad(partial_derivative_opname)
 
     return grad
 
@@ -485,6 +486,10 @@ def test_SquareOp():
   y = PlaceholderOp(float)
   y.set_value(3.0)
 
-  loss =  SquareOp(y - (w * x + b))
-  print("w: {}, forward: {}, grad: {}".format(w.get_value(), loss.forward(), loss.grad(w.name))) # 148.0
-  print("b: {}, forward: {}, grad: {}".format(b.get_value(), loss.forward(), loss.grad(b.name))) # 74.0
+  loss = SquareOp(y - (w * x + b))
+  print("w: {}, forward: {}, grad: {}".format(w.get_value(),
+                                              loss.forward(),
+                                              loss.grad(w.name)))  # 148.0
+  print("b: {}, forward: {}, grad: {}".format(b.get_value(),
+                                              loss.forward(),
+                                              loss.grad(b.name)))  # 74.0

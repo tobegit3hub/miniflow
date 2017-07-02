@@ -19,8 +19,9 @@ import time
 
 
 def main():
-  print("Start benchmark")
   epoch_number = 100000
+  print("Benchmark scenario: {}, epoch: {}".format("add operation",
+                                                   epoch_number))
 
   sess = tf.Session()
   a = tf.constant(10.0)
@@ -32,8 +33,8 @@ def main():
     sess.run(c)
   end_time = time.time()
 
-  print("Result: {}".format(end_time - start_time))  # Almost 0.196532011032
-  print("End of benchmark")
+  print(
+      "Run time(s): {}".format(end_time - start_time))  # Almost 0.196532011032
 
 
 if __name__ == "__main__":

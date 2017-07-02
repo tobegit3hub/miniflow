@@ -16,24 +16,21 @@
 
 import sys
 sys.path.append("../../")
+sys.path.append("../../examples/miniflow_examples/")
 
 import miniflow.miniflow as tf
 import time
 
+import linear_regression
+
 
 def main():
   epoch_number = 100000
-  print("Benchmark scenario: {}, epoch: {}".format("add operation",
+  print("Benchmark scenario: {}, epoch: {}".format("linear regression",
                                                    epoch_number))
 
-  sess = tf.Session()
-  a = tf.constant(10.0)
-  b = tf.constant(32.0)
-  c = a + b
-
   start_time = time.time()
-  for i in range(epoch_number):
-    sess.run(c)
+  linear_regression.linear_regression(epoch_number, False)
   end_time = time.time()
 
   print("Run time(s): {}".format(end_time - start_time))  # Almost 13.787735939
