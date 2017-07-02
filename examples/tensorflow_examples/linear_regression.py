@@ -18,7 +18,7 @@ import tensorflow as tf
 
 
 def linear_regression():
-  epoch_number = 10
+  epoch_number = 30
   learning_rate = 0.01
   train_features = [1.0, 2.0, 3.0, 4.0, 5.0]
   train_labels = [10.0, 20.0, 30.0, 40.0, 50.0]
@@ -29,7 +29,7 @@ def linear_regression():
   y = tf.placeholder(tf.float32)
 
   predict = weights * x + bias
-  loss = y - predict
+  loss = tf.square(y - predict)
   sgd_optimizer = tf.train.GradientDescentOptimizer(learning_rate)
   train_op = sgd_optimizer.minimize(loss)
 

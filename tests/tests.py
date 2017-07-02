@@ -24,17 +24,17 @@ import optimizer
 
 
 def main():
-  epoch_number = 10
+  epoch_number = 30
   learning_rate = 0.01
   train_features = [1.0, 2.0, 3.0, 4.0, 5.0]
   train_labels = [10.0, 20.0, 30.0, 40.0, 50.0]
 
   weights = ops.VariableOp(0.0)
   bias = ops.VariableOp(0.0)
-  x = ops.PlaceholderOp()
-  y = ops.PlaceholderOp()
+  x = ops.PlaceholderOp(float)
+  y = ops.PlaceholderOp(float)
   predict = weights * x + bias
-  loss = y - predict
+  loss = ops.SquareOp(y - predict)
   sgd_optimizer = optimizer.GradientDescentOptimizer(learning_rate)
   train_op = sgd_optimizer.minimize(loss)
 
