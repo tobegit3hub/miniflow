@@ -63,6 +63,9 @@ class Op(object):
   def __rdiv__(self, other):
     return DivideOp(other, self)
 
+  def __pow__(self, power, modulo=None):
+    return PowerOp(self, power)
+
 
 class PlaceholderOp(Op):
   """The placeholer operation which value is set when Session.run()"""
@@ -162,7 +165,44 @@ def test_VariableOp():
       x, variable.forward(), variable.grad()))
 
 
-class SquareOp(Op):
+class PowerOp(Op):
+  def __init__(self, input, power, name="Power"):
+    if not isinstance(input, Op):
+      self.op = ConstantOp(input)
+    else:
+      self.op = input
+
+    self.power = power
+    self.name = name
+
+    self.graph = graph.get_default_graph()
+    self.graph.add_to_graph(self)
+
+  def forward(self):
+    result = pow(self.op.forward(), self.power)
+    return result
+
+  def grad(self, partial_derivative_opname=None):
+    if isinstance(self.op, PlaceholderOp) or isinstance(self.op, ConstantOp):
+      # op is the constant
+      grad = 0
+    elif isinstance(self.op, VariableOp):
+      # op is the variable
+      grad = self.power * pow(self.op.forward(), self.power - 1)
+    else:
+      # op is other complex operation and use chain rule
+      grad = self.power * pow(self.op.forward(), self.power - 1
+                              ) * self.op.grad(partial_derivative_opname)
+
+    return grad
+
+
+class SquareOp(PowerOp):
+  def __init__(self, input, name="Square"):
+    super(SquareOp, self).__init__(input, 2, name)
+
+
+class SquareOpOld(Op):
   def __init__(self, input, name="Square"):
     if not isinstance(input, Op):
       self.op = ConstantOp(input)
@@ -198,7 +238,12 @@ class SquareOp(Op):
     return grad
 
 
-class CubicOp(Op):
+class CubicOp(PowerOp):
+  def __init__(self, input, name="Cubic"):
+    super(CubicOp, self).__init__(input, 3, name)
+
+
+class CubicOpOld(Op):
   def __init__(self, input, name="Cubic"):
     if not isinstance(input, Op):
       self.op = ConstantOp(input)
