@@ -52,7 +52,7 @@ sess.run(a + b)
 Run with MiniFlow.
 
 ```python
-import miniflow.miniflow as tf
+import miniflow as tf
 
 sess = tf.Session()
 
@@ -85,7 +85,7 @@ sess.run(a + b, feed_dict={a.name: 10})
 Run with MiniFlow.
 
 ```python
-import miniflow.miniflow as tf
+import miniflow as tf
 
 sess = tf.Session()
 
@@ -149,7 +149,7 @@ def linear_regression():
 
   predict = weights * x + bias
   loss = tf.square(y - predict)
-  sgd_optimizer = miniflow.optimizer.GradientDescentOptimizer(learning_rate)
+  sgd_optimizer = tf.train.GradientDescentOptimizer(learning_rate)
   train_op = sgd_optimizer.minimize(loss)
 
   with tf.Session() as sess:
@@ -184,7 +184,8 @@ GitHub issues and pull-requests are highly appreciated and feel free to make you
 Release to upload the official python package of [miniflow](https://pypi.python.org/pypi/miniflow/) in [pypi](https://pypi.python.org/pypi).
 
 ```
-python ./setup.py sdist --format=gztar
+python setup.py sdist upload
 
+python setup.py sdist --format=gztar
 twine upload dist/miniflow-x.x.x.tar.gz
 ```

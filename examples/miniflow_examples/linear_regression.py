@@ -15,8 +15,7 @@
 # limitations under the License.
 
 import miniflow
-import miniflow.optimizer
-import miniflow.miniflow as tf
+import miniflow as tf
 
 
 def linear_regression(customized_epoch_number=None, verbose=True):
@@ -35,10 +34,11 @@ def linear_regression(customized_epoch_number=None, verbose=True):
 
   predict = weights * x + bias
   loss = tf.square(y - predict)
-  sgd_optimizer = miniflow.optimizer.GradientDescentOptimizer(learning_rate)
+  sgd_optimizer = tf.train.GradientDescentOptimizer(learning_rate)
   train_op = sgd_optimizer.minimize(loss)
 
   with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
 
     for epoch_index in range(epoch_number):
       # Take one sample from train dataset

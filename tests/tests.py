@@ -21,6 +21,7 @@ import graph
 import session
 import ops
 import optimizer
+import train
 
 
 def main():

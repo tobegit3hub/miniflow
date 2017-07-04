@@ -538,3 +538,10 @@ def test_SquareOp():
   print("b: {}, forward: {}, grad: {}".format(b.get_value(),
                                               loss.forward(),
                                               loss.grad(b.name)))  # 74.0
+
+
+def global_variables_initializer():
+  pass
+
+def local_variables_initializer():
+  pass
