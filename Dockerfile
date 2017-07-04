@@ -44,6 +44,6 @@ RUN pip --no-cache-dir install -i http://mirrors.aliyun.com/pypi/simple/ --trust
 RUN apt-get install -y vim
 
 # Install MiniFlow
-RUN pip install miniflow
+RUN pip install miniflow>=0.2.4
 
 CMD ["bash"]
