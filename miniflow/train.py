@@ -11,3 +11,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""
+Alias MiniFlow APIs for TensorFlow APIs.
+
+import miniflow as tf
+tf.train.GradientDescentOptimizer
+"""
+
+import optimizer
+
+GradientDescentOptimizer = optimizer.GradientDescentOptimizer
