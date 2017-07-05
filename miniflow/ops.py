@@ -540,8 +540,27 @@ def test_SquareOp():
                                               loss.grad(b.name)))  # 74.0
 
 
-def global_variables_initializer():
-  pass
+class GlobalVariablesInitializerOp(Op):
+  def __init__(self, name="GlobalVariablesInitializer"):
+    self.name = name
+    self.graph = graph.get_default_graph()
+    self.graph.add_to_graph(self)
 
-def local_variables_initializer():
-  pass
+  def forward(self):
+    pass
+
+  def grad(self):
+    raise NotImplementedError
+
+
+class LocalVariablesInitializerOp(Op):
+  def __init__(self, name="LocalVariablesInitializer"):
+    self.name = name
+    self.graph = graph.get_default_graph()
+    self.graph.add_to_graph(self)
+
+  def forward(self):
+    pass
+
+  def grad(self):
+    raise NotImplementedError

@@ -40,6 +40,8 @@ def main():
   train_op = sgd_optimizer.minimize(loss)
 
   with session.Session() as sess:
+    sess.run(ops.GlobalVariablesInitializerOp())
+
     for epoch_index in range(epoch_number):
       # Take one sample from train dataset
       sample_number = len(train_features)

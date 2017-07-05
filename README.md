@@ -153,6 +153,7 @@ def linear_regression():
   train_op = sgd_optimizer.minimize(loss)
 
   with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
 
     for epoch_index in range(epoch_number):
       # Take one sample from train dataset

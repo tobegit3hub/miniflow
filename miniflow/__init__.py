@@ -57,6 +57,5 @@ minus = ops.MinusOp
 multiple = ops.MultipleOp
 divide = ops.DivideOp
 square = ops.SquareOp
-
-global_variables_initializer = ops.global_variables_initializer
-local_variables_initializer = ops.local_variables_initializer
+global_variables_initializer = ops.GlobalVariablesInitializerOp
+local_variables_initializer = ops.LocalVariablesInitializerOp
