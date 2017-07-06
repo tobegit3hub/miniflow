@@ -50,12 +50,12 @@ class Graph(object):
 
 
 # TODO: Make global variable for all packages
-default_graph = Graph()
+_default_graph = Graph()
 
 
 def get_default_graph():
-  if default_graph == None:
-    global default_graph
-    default_graph = Graph()
+  if _default_graph == None:
+    global _default_graph
+    _default_graph = Graph()
   else:
-    return default_graph
+    return _default_graph
