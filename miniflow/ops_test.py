@@ -11,3 +11,35 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+import unittest
+
+from ops import Op
+
+
+class OpTest(unittest.TestCase):
+  def setUp(self):
+    pass
+
+  def tearDown(self):
+    pass
+
+  def test_init(self):
+    foo = Op()
+    self.assertEqual(foo.__class__, Op)
+
+  def test_forward(self):
+    foo = Op()
+
+    with self.assertRaises(NotImplementedError):
+      foo.forward()
+
+  def test_grad(self):
+    foo = Op()
+
+    with self.assertRaises(NotImplementedError):
+      foo.grad()
+
+
+if __name__ == '__main__':
+  unittest.main()

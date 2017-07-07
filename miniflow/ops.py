@@ -30,8 +30,8 @@ if os.environ.has_key("ENABLE_SWIG_OP"):
 class Op(object):
   """The basic class for all operation."""
 
-  def __init__(self):
-    pass
+  def __init__(self, name="Op"):
+    self.name = name
 
   def forward(self):
     raise NotImplementedError

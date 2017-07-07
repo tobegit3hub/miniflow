@@ -17,6 +17,7 @@
 import miniflow as tf
 import miniflow
 
+
 def linear_regression():
   epoch_number = 10
   learning_rate = 0.01

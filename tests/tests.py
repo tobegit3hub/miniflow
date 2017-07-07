@@ -35,7 +35,7 @@ def main():
   x = ops.PlaceholderOp(float)
   y = ops.PlaceholderOp(float)
   predict = weights * x + bias
-  loss = (y - predict) ** 2
+  loss = (y - predict)**2
   sgd_optimizer = optimizer.GradientDescentOptimizer(learning_rate)
   train_op = sgd_optimizer.minimize(loss)
 

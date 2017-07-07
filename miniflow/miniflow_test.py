@@ -11,3 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+import unittest
+
+
+class MiniflowTest(unittest.TestCase):
+  def setUp(self):
+    pass
+
+  def tearDown(self):
+    pass
+
+  def test_nothing(self):
+    self.assertEqual(1, 1)
+
+
+if __name__ == '__main__':
+  unittest.main()
