@@ -45,8 +45,9 @@ class Graph(object):
     return unique_name
 
   def add_to_graph(self, op):
-    op.name = self.get_unique_name(op.name)
-    self._name_op_map[op.name] = op
+    unique_name = self.get_unique_name(op.get_name())
+    op.set_name(unique_name)
+    self._name_op_map[op.get_name()] = op
 
 
 # TODO: Make global variable for all packages

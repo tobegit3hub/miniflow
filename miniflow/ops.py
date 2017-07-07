@@ -31,7 +31,13 @@ class Op(object):
   """The basic class for all operation."""
 
   def __init__(self, name="Op"):
-    self.name = name
+    self._name = name
+
+  def get_name(self):
+    return self._name
+
+  def set_name(self, name):
+    self._name = name
 
   def forward(self):
     raise NotImplementedError
@@ -71,26 +77,26 @@ class PlaceholderOp(Op):
   """The placeholer operation which value is set when Session.run()"""
 
   def __init__(self, dtype=None, shape=None, name="Placeholder"):
+    super(PlaceholderOp, self).__init__(name)
     # TODO: Use dtype and shape
-    self.dtype = dtype
-    self.shape = shape
-    self.name = name
+    self._dtype = dtype
+    self._shape = shape
 
     # The value is None util Session.run() with feed_dict parameter
-    self.value = None
+    self._value = None
 
     # TODO: Support other graph instance
-    self.graph = graph.get_default_graph()
-    self.graph.add_to_graph(self)
+    self._graph = graph.get_default_graph()
+    self._graph.add_to_graph(self)
 
   def set_value(self, value):
-    self.value = value
+    self._value = value
 
   def get_value(self):
-    return self.value
+    return self._value
 
   def forward(self):
-    return self.value
+    return self._value
 
   def grad(self, partial_derivative_opname=None):
     return 0
@@ -100,19 +106,19 @@ class ConstantOp(Op):
   """The constant operation which contains one initialized value."""
 
   def __init__(self, value, name="Constant"):
-    self.value = value
-    self.name = name
+    super(ConstantOp, self).__init__(name)
+    self._value = value
 
-    self.graph = graph.get_default_graph()
-    self.graph.add_to_graph(self)
+    self._graph = graph.get_default_graph()
+    self._graph.add_to_graph(self)
 
   # TODO: Not allow to set the value
 
   def get_value(self):
-    return self.value
+    return self._value
 
   def forward(self):
-    return self.value
+    return self._value
 
   def grad(self, partial_derivative_opname=None):
     return 0
@@ -126,30 +132,30 @@ class VariableOp(Op):
   """
 
   def __init__(self, value, is_trainable=True, name="Variable"):
-    self.value = value
-    self.is_trainable = is_trainable
-    self.name = name
+    super(VariableOp, self).__init__(name)
+    self._value = value
+    self._is_trainable = is_trainable
 
-    self.graph = graph.get_default_graph()
-    self.graph.add_to_graph(self)
+    self._graph = graph.get_default_graph()
+    self._graph.add_to_graph(self)
 
-    if self.is_trainable:
-      self.graph.add_to_trainable_variables_collection(self.name, self)
+    if self._is_trainable:
+      self._graph.add_to_trainable_variables_collection(self.get_name(), self)
 
   def get_value(self):
-    return self.value
+    return self._value
 
   def set_value(self, value):
-    self.value = value
+    self._value = value
 
   def forward(self):
-    return self.value
+    return self._value
 
   def grad(self, partial_derivative_opname=None):
     if partial_derivative_opname is None:
       grad = 1
     else:
-      if self.name == partial_derivative_opname:
+      if self._name == partial_derivative_opname:
         # Specify to compute this derivative
         grad = 1
       else:
@@ -158,41 +164,35 @@ class VariableOp(Op):
     return grad
 
 
-def test_VariableOp():
-  x = 10
-  variable = VariableOp(x)
-  print("X: {}, forward: {}, grad: {}".format(
-      x, variable.forward(), variable.grad()))
-
-
 class PowerOp(Op):
   def __init__(self, input, power, name="Power"):
+    super(PowerOp, self).__init__(name)
+
     if not isinstance(input, Op):
-      self.op = ConstantOp(input)
+      self._op = ConstantOp(input)
     else:
-      self.op = input
+      self._op = input
 
-    self.power = power
-    self.name = name
+    self._power = power
 
-    self.graph = graph.get_default_graph()
-    self.graph.add_to_graph(self)
+    self._graph = graph.get_default_graph()
+    self._graph.add_to_graph(self)
 
   def forward(self):
-    result = pow(self.op.forward(), self.power)
+    result = pow(self._op.forward(), self._power)
     return result
 
   def grad(self, partial_derivative_opname=None):
-    if isinstance(self.op, PlaceholderOp) or isinstance(self.op, ConstantOp):
+    if isinstance(self._op, PlaceholderOp) or isinstance(self._op, ConstantOp):
       # op is the constant
       grad = 0
-    elif isinstance(self.op, VariableOp):
+    elif isinstance(self._op, VariableOp):
       # op is the variable
-      grad = self.power * pow(self.op.forward(), self.power - 1)
+      grad = self._power * pow(self._op.forward(), self._power - 1)
     else:
       # op is other complex operation and use chain rule
-      grad = self.power * pow(self.op.forward(), self.power - 1
-                              ) * self.op.grad(partial_derivative_opname)
+      grad = self._power * pow(self._op.forward(), self._power - 1
+                               ) * self._op.grad(partial_derivative_opname)
 
     return grad
 
@@ -203,6 +203,8 @@ class SquareOp(PowerOp):
 
 
 class SquareOpOld(Op):
+  # TODO: Deprecated op
+
   def __init__(self, input, name="Square"):
     if not isinstance(input, Op):
       self.op = ConstantOp(input)
@@ -244,6 +246,8 @@ class CubicOp(PowerOp):
 
 
 class CubicOpOld(Op):
+  # TODO: Deprecated op
+
   def __init__(self, input, name="Cubic"):
     if not isinstance(input, Op):
       self.op = ConstantOp(input)
@@ -280,16 +284,11 @@ class CubicOpOld(Op):
     return grad
 
 
-def test_CubicOp():
-  x = 10
-  variable = CubicOp(x)
-  print("X: {}, forward: {}, grad: {}".format(
-      x, variable.forward(), variable.grad()))
-
-
 def SigmoidOp(Op):
-  def __init__(self, value, name="Sigmoid"):
-    pass
+  # TODO: Need to implement the forward and grad functions
+
+  def __init__(self, input, name="Sigmoid"):
+    super(SigmoidOp, self).__init__(name)
 
 
 class AddOp(Op):
@@ -299,27 +298,27 @@ class AddOp(Op):
   """
 
   def __init__(self, input1, input2, name="Add"):
+    super(AddOp, self).__init__(name)
+
     if not isinstance(input1, Op):
-      self.op1 = ConstantOp(input1)
+      self._op1 = ConstantOp(input1)
     else:
-      self.op1 = input1
+      self._op1 = input1
 
     if not isinstance(input2, Op):
-      self.op2 = ConstantOp(input2)
+      self._op2 = ConstantOp(input2)
     else:
-      self.op2 = input2
+      self._op2 = input2
 
-    self.name = name
-
-    self.graph = graph.get_default_graph()
-    self.graph.add_to_graph(self)
+    self._graph = graph.get_default_graph()
+    self._graph.add_to_graph(self)
 
   def forward(self):
-    result = self.op1.forward() + self.op2.forward()
+    result = self._op1.forward() + self._op2.forward()
     return result
 
   def grad(self, partial_derivative_opname=None):
-    result = self.op1.grad(partial_derivative_opname) + self.op2.grad(
+    result = self._op1.grad(partial_derivative_opname) + self._op2.grad(
         partial_derivative_opname)
     return result
 
@@ -330,33 +329,34 @@ class MinusOp(Op):
   """
 
   def __init__(self, input1, input2, name="Minus"):
+    super(MinusOp, self).__init__(name)
+
     if not isinstance(input1, Op):
-      self.op1 = ConstantOp(input1)
+      self._op1 = ConstantOp(input1)
     else:
-      self.op1 = input1
+      self._op1 = input1
 
     if not isinstance(input2, Op):
-      self.op2 = ConstantOp(input2)
+      self._op2 = ConstantOp(input2)
     else:
-      self.op2 = input2
+      self._op2 = input2
 
-    self.name = name
-
-    self.graph = graph.get_default_graph()
-    self.graph.add_to_graph(self)
+    self._graph = graph.get_default_graph()
+    self._graph.add_to_graph(self)
 
   def forward(self):
-    result = self.op1.forward() - self.op2.forward()
+    result = self._op1.forward() - self._op2.forward()
     return result
 
   def grad(self, partial_derivative_opname=None):
-    result = self.op1.grad(partial_derivative_opname) - self.op2.grad(
+    result = self._op1.grad(partial_derivative_opname) - self._op2.grad(
         partial_derivative_opname)
     return result
 
 
 class AddNOp(Op):
   def __init__(self, *inputs):
+    # TODO: Deprecated op
     # TODO: Support user defined name in the parameter
     self.name = "AddN"
 
@@ -385,46 +385,47 @@ class AddNOp(Op):
 # TODO: Can not support operations like "x * x", only "x * 3"
 class MultipleOp(Op):
   def __init__(self, input1, input2, name="Multiple"):
+    super(MultipleOp, self).__init__(name)
+
     if not isinstance(input1, Op):
-      self.op1 = ConstantOp(input1)
+      self._op1 = ConstantOp(input1)
     else:
-      self.op1 = input1
+      self._op1 = input1
 
     if not isinstance(input2, Op):
-      self.op2 = ConstantOp(input2)
+      self._op2 = ConstantOp(input2)
     else:
-      self.op2 = input2
+      self._op2 = input2
 
-    self.name = name
-
-    self.graph = graph.get_default_graph()
-    self.graph.add_to_graph(self)
+    self._graph = graph.get_default_graph()
+    self._graph.add_to_graph(self)
 
   def forward(self):
-    result = self.op1.forward() * self.op2.forward()
+    result = self._op1.forward() * self._op2.forward()
     return result
 
   def grad(self, partial_derivative_opname=None):
 
-    if isinstance(self.op1, PlaceholderOp) or isinstance(self.op1, ConstantOp):
+    if isinstance(self._op1, PlaceholderOp) or isinstance(
+        self._op1, ConstantOp):
       # op1 is the coefficient of this formula
-      op1_grad = self.op1.forward()
+      op1_grad = self._op1.forward()
 
-      if isinstance(self.op2, PlaceholderOp) or isinstance(
-          self.op2, ConstantOp):
+      if isinstance(self._op2, PlaceholderOp) or isinstance(
+          self._op2, ConstantOp):
         # two elements are both constant values
         op2_grad = 0
       else:
         # op2 may has VariableOp
-        op2_grad = self.op2.grad(partial_derivative_opname)
+        op2_grad = self._op2.grad(partial_derivative_opname)
 
-    elif isinstance(self.op2, PlaceholderOp) or isinstance(
-        self.op2, ConstantOp):
+    elif isinstance(self._op2, PlaceholderOp) or isinstance(
+        self._op2, ConstantOp):
       # op2 is the coefficient of this formula
-      op2_grad = self.op2.forward()
+      op2_grad = self._op2.forward()
 
       # op1 may has VariableOp
-      op1_grad = self.op1.grad(partial_derivative_opname)
+      op1_grad = self._op1.grad(partial_derivative_opname)
 
     else:
       # op1 and op2 may has VariableOp
@@ -437,6 +438,7 @@ class MultipleOp(Op):
 
 
 class MultipleNOp(Op):
+  # TODO: Deprecated op
   """The multiple operation for n inputs."""
 
   def __init__(self, *inputs):
@@ -467,32 +469,34 @@ class MultipleNOp(Op):
 
 class DivideOp(Op):
   def __init__(self, input1, input2, name="Divide"):
+    super(DivideOp, self).__init__(name)
+
     if not isinstance(input1, Op):
-      self.op1 = ConstantOp(input1)
+      self._op1 = ConstantOp(input1)
     else:
-      self.op1 = input1
+      self._op1 = input1
 
     if not isinstance(input2, Op):
-      self.op2 = ConstantOp(input2)
+      self._op2 = ConstantOp(input2)
     else:
-      self.op2 = input2
+      self._op2 = input2
 
-    self.name = name
-
-    self.graph = graph.get_default_graph()
-    self.graph.add_to_graph(self)
+    self._graph = graph.get_default_graph()
+    self._graph.add_to_graph(self)
 
   def forward(self):
-    result = self.op1.forward() / self.op2.forward()
+    result = self._op1.forward() / self._op2.forward()
     return result
 
   def grad(self, partial_derivative_opname=None):
-    result = self.op1.grad(partial_derivative_opname) / self.op2.grad(
+    result = self._op1.grad(partial_derivative_opname) / self._op2.grad(
         partial_derivative_opname)
     return result
 
 
 class UpdateVariableOp(Op):
+  # TODO: Deprecated op
+
   def __init__(self, variableOp, value, name="UpdateVariableOp"):
     self.variableOp = variableOp
     self.value = value
@@ -509,6 +513,8 @@ class UpdateVariableOp(Op):
 
 
 class UpdateVariableNOp(Op):
+  # TODO: Deprecated op
+
   def __init__(self, variableop_value_map, name="UpdateVariableNOp"):
     self.variableop_value_map = variableop_value_map
     self.name = name
@@ -523,28 +529,12 @@ class UpdateVariableNOp(Op):
     return self.variableop_value_map
 
 
-def test_SquareOp():
-  w = VariableOp(10)
-  b = VariableOp(20)
-  x = PlaceholderOp(float)
-  x.set_value(2.0)
-  y = PlaceholderOp(float)
-  y.set_value(3.0)
-
-  loss = SquareOp(y - (w * x + b))
-  print("w: {}, forward: {}, grad: {}".format(w.get_value(),
-                                              loss.forward(),
-                                              loss.grad(w.name)))  # 148.0
-  print("b: {}, forward: {}, grad: {}".format(b.get_value(),
-                                              loss.forward(),
-                                              loss.grad(b.name)))  # 74.0
-
-
 class GlobalVariablesInitializerOp(Op):
   def __init__(self, name="GlobalVariablesInitializer"):
-    self.name = name
-    self.graph = graph.get_default_graph()
-    self.graph.add_to_graph(self)
+    super(GlobalVariablesInitializerOp, self).__init__(name)
+
+    self._graph = graph.get_default_graph()
+    self._graph.add_to_graph(self)
 
   def forward(self):
     pass
@@ -555,9 +545,10 @@ class GlobalVariablesInitializerOp(Op):
 
 class LocalVariablesInitializerOp(Op):
   def __init__(self, name="LocalVariablesInitializer"):
-    self.name = name
-    self.graph = graph.get_default_graph()
-    self.graph.add_to_graph(self)
+    super(LocalVariablesInitializerOp, self).__init__(name)
+
+    self._graph = graph.get_default_graph()
+    self._graph.add_to_graph(self)
 
   def forward(self):
     pass

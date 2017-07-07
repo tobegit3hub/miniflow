@@ -31,7 +31,7 @@ class Session(object):
   def run(self, op, feed_dict=None, options=None):
 
     # Update the value of PlaceholerOp with feed_dict data
-    name_op_map = op.graph.get_name_op_map()
+    name_op_map = op._graph.get_name_op_map()
 
     if feed_dict != None:
       # Example: {"Placeholer_1": 10} or {PlaceholderOp: 10}

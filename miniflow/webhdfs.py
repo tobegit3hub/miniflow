@@ -35,21 +35,21 @@ class Webhdfs(object):
     """
 
   def __init__(self, namenode_host, namenode_port, username, timeout=60):
-    self.namenode_host = namenode_host
-    self.namenode_port = namenode_port
-    self.username = username
-    self.timeout = timeout
-    self.webhdfs_prefix = "/webhdfs/v1"
+    self._namenode_host = namenode_host
+    self._namenode_port = namenode_port
+    self._username = username
+    self._timeout = timeout
+    self._webhdfs_prefix = "/webhdfs/v1"
 
   def get(self, source_path):
     if os.path.isabs(source_path) == False:
       raise Exception("Only absolute paths supported: %s" % source_path)
 
-    url_path = self.webhdfs_prefix + source_path + '?op=OPEN&overwrite=true&user.name=' + self.username
+    url_path = self._webhdfs_prefix + source_path + '?op=OPEN&overwrite=true&user.name=' + self._username
     logger.debug("GET URL: %s" % url_path)
 
     httpClient = httplib.HTTPConnection(
-        self.namenode_host, self.namenode_port, timeout=self.timeout)
+        self._namenode_host, self._namenode_port, timeout=self._timeout)
     httpClient.request('GET', url_path, headers={})
     response = httpClient.getresponse()
     data = None

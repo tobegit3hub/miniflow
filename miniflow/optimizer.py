@@ -20,16 +20,16 @@ import ops
 class OptimizerMinimizeOp(ops.Op):
   def __init__(self, optimizer, loss, name="OptimizerMinimize"):
     super(OptimizerMinimizeOp, self).__init__()
-    self.optimizer = optimizer
-    self.loss = loss
-    self.name = name
 
-    self.graph = loss.graph
-    self.graph.add_to_graph(self)
+    self._optimizer = optimizer
+    self._loss = loss
+
+    self._graph = loss._graph
+    self._graph.add_to_graph(self)
 
   def forward(self):
-    variablename_grad_map = self.optimizer.compute_gradients(self.loss)
-    self.optimizer.apply_gradients(variablename_grad_map)
+    variablename_grad_map = self._optimizer.compute_gradients(self._loss)
+    self._optimizer.apply_gradients(variablename_grad_map)
 
   def grad(self):
     raise NotImplementedError
@@ -58,6 +58,7 @@ class Optimizer(object):
 class GradientDescentOptimizer(Optimizer):
   def __init__(self, learning_rate=0.01, name="GradientDescent"):
     super(GradientDescentOptimizer, self).__init__(name)
+
     self._learning_rate = learning_rate
 
     self._graph = graph.get_default_graph()

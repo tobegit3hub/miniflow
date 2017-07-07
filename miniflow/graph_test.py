@@ -51,7 +51,7 @@ class GraphTest(unittest.TestCase):
     op = ops.Op()
     graph.add_to_graph(op)
     name_op_map = graph.get_name_op_map()
-    self.assertEqual(name_op_map.keys()[0], op.name)
+    self.assertEqual(name_op_map.keys()[0], op.get_name())
     self.assertEqual(name_op_map.values()[0], op)
 
 
