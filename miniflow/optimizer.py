@@ -36,8 +36,8 @@ class OptimizerMinimizeOp(ops.Op):
 
 
 class Optimizer(object):
-  def __init__(self, name=None):
-    self.name = name
+  def __init__(self, name="Optimizer"):
+    self._name = name
 
   def minimize(self, loss):
     pass
@@ -48,20 +48,40 @@ class Optimizer(object):
   def apply_gradients(self):
     pass
 
+  def get_name(self):
+    return self._name
+
+  def set_name(self, name):
+    self._name = name
+
 
 class GradientDescentOptimizer(Optimizer):
   def __init__(self, learning_rate=0.01, name="GradientDescent"):
     super(GradientDescentOptimizer, self).__init__(name)
-    self.learning_rate = learning_rate
+    self._learning_rate = learning_rate
 
-    self.graph = graph.get_default_graph()
+    self._graph = graph.get_default_graph()
+
+  def get_learning_rate(self):
+    return self._learning_rate
+
+  def set_learning_rate(self, learning_rate):
+    # TODO: Check type of parameter
+    self._learning_rate = learning_rate
+
+  def get_graph(self):
+    return self._graph
+
+  def set_graph(self, graph):
+    self._graph = graph
 
   def minimize(self, loss, global_step=None):
     return OptimizerMinimizeOp(self, loss)
 
   def compute_gradients(self, loss):
 
-    variablename_variable_map = self.graph.get_trainable_variables_collection()
+    variablename_variable_map = self._graph.get_trainable_variables_collection(
+    )
 
     variablename_grad_map = {}
     for variable_name, variable in variablename_variable_map.iteritems():
@@ -72,11 +92,12 @@ class GradientDescentOptimizer(Optimizer):
 
   def apply_gradients(self, variablename_grad_map):
 
-    variablename_variable_map = self.graph.get_trainable_variables_collection()
+    variablename_variable_map = self._graph.get_trainable_variables_collection(
+    )
 
     for variable_name, variable in variablename_variable_map.iteritems():
       grad = variablename_grad_map[variable_name]
-      final_grad = self.learning_rate * grad
+      final_grad = self._learning_rate * grad
       variable.set_value(variable.get_value() - final_grad)
 
 
@@ -95,27 +116,10 @@ class AdamOptimizer(Optimizer):
                beta2=0.99,
                epsilon=0.01,
                name="Adam"):
-    self.name = name
-    self.learning_rate = learning_rate
-    self.beta1 = beta1
-    self.beta2 = beta2
-    self.epsilon = epsilon
-    self.m = []
-    self.v = []
-
-
-def test_GradientDescentOptimizer():
-  """
-    opt = GradientDescentOptimizer(learning_rate=0.1)
-    opt_op = opt.minimize(cost, var_list=<list of variables>)
-  """
-  pass
-  """
-  optimizer = GradientDescentOptimizer(learning_rate=0.1)
-  print(optimizer)
-
-  loss = "TODO"
-  optimizer.minimize(loss)
-  sess = session.Session()
-  sess.run(optimizer)
-  """
+    super(GradientDescentOptimizer, self).__init__(name)
+    self._learning_rate = learning_rate
+    self._beta1 = beta1
+    self._beta2 = beta2
+    self._epsilon = epsilon
+    self._m = []
+    self._v = []

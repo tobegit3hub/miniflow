@@ -11,3 +11,27 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+import unittest
+
+from session import Session
+import ops
+
+
+class SessionTest(unittest.TestCase):
+  def setUp(self):
+    pass
+
+  def tearDown(self):
+    pass
+
+  def test_init(self):
+    foo = Session()
+    self.assertEqual(foo.__class__, Session)
+
+  def test_run(self):
+    pass
+
+
+if __name__ == '__main__':
+  unittest.main()
