@@ -3,10 +3,13 @@ TEST_PATH=./
 
 all:
 
-test: unit_test
+test: unittest
 
-unit_test:
+unittest:
 	python -m unittest discover --pattern="*_test.py" -v
+
+pytest:
+	pytest --showlocals --durations=1 --pyargs
 
 version:
 	python -c "import miniflow; print(miniflow)"
