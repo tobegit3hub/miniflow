@@ -28,7 +28,7 @@ class Graph(object):
     return self._trainable_variables_collection
 
   def add_to_trainable_variables_collection(self, key, value):
-    if self._trainable_variables_collection.has_key(key):
+    if key in self._trainable_variables_collection:
       logging.warning(
           "The key: {} exists in trainable_variables_collection".format(key))
     else:
@@ -55,8 +55,8 @@ _default_graph = Graph()
 
 
 def get_default_graph():
+  global _default_graph
   if _default_graph == None:
-    global _default_graph
     _default_graph = Graph()
   else:
     return _default_graph

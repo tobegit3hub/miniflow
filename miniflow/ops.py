@@ -13,15 +13,16 @@
 # limitations under the License.
 """This module contains all the basic operations."""
 
+from abc import ABCMeta, abstractmethod
 import logging
 import math
 import os
 import sys
 
-import graph
+from . import graph
 
 # Enable swig by environment variable
-if os.environ.has_key("ENABLE_SWIG_OP"):
+if "ENABLE_SWIG_OP" in os.environ:
   logging.info("Enable swig operations by environment variable")
   sys.path.append("../")
   import swig.op
@@ -39,7 +40,9 @@ class Op(object):
   def set_name(self, name):
     self._name = name
 
+  @abstractmethod
   def forward(self):
+    # TODO: No need to implement in abstract method
     raise NotImplementedError
 
   def grad(self):
@@ -217,7 +220,7 @@ class SquareOpOld(Op):
     self.graph.add_to_graph(self)
 
   def forward(self):
-    if os.environ.has_key("ENABLE_SWIG_OP"):
+    if "ENABLE_SWIG_OP" in os.environ:
       result = swig.op.square(self.op.forward())
     else:
       result = pow(self.op.forward(), 2)
@@ -229,7 +232,7 @@ class SquareOpOld(Op):
       grad = 0
     elif isinstance(self.op, VariableOp):
       # op is the variable
-      if os.environ.has_key("ENABLE_SWIG_OP"):
+      if "ENABLE_SWIG_OP" in os.environ:
         grad = swig.op.multiple(2, self.op.forward())
       else:
         grad = 2 * self.op.forward()
@@ -260,7 +263,7 @@ class CubicOpOld(Op):
     self.graph.add_to_graph(self)
 
   def forward(self):
-    if os.environ.has_key("ENABLE_SWIG_OP"):
+    if "ENABLE_SWIG_OP" in os.environ:
       result = swig.op.cubic(self.op.forward())
     else:
       result = math.pow(self.op.forward(), 3)
@@ -272,7 +275,7 @@ class CubicOpOld(Op):
       grad = 0
     elif isinstance(self.op, VariableOp):
       # op is the variable
-      if os.environ.has_key("ENABLE_SWIG_OP"):
+      if "ENABLE_SWIG_OP" in os.environ:
         grad = swig.op.multiple(3, swig.op.square(self.op.forward()))
       else:
         grad = 3 * math.pow(self.op.forward(), 2)

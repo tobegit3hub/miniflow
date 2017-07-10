@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import graph
-import session
-import ops
+from . import graph
+from . import session
+from . import ops
 
 
 class OptimizerMinimizeOp(ops.Op):
@@ -85,7 +85,7 @@ class GradientDescentOptimizer(Optimizer):
     )
 
     variablename_grad_map = {}
-    for variable_name, variable in variablename_variable_map.iteritems():
+    for variable_name, variable in variablename_variable_map.items():
       grad = loss.grad(variable_name)
       variablename_grad_map[variable_name] = grad
 
@@ -96,7 +96,7 @@ class GradientDescentOptimizer(Optimizer):
     variablename_variable_map = self._graph.get_trainable_variables_collection(
     )
 
-    for variable_name, variable in variablename_variable_map.iteritems():
+    for variable_name, variable in variablename_variable_map.items():
       grad = variablename_grad_map[variable_name]
       final_grad = self._learning_rate * grad
       variable.set_value(variable.get_value() - final_grad)

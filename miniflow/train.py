@@ -18,6 +18,6 @@ import miniflow as tf
 tf.train.GradientDescentOptimizer
 """
 
-import optimizer
+from . import optimizer
 
 GradientDescentOptimizer = optimizer.GradientDescentOptimizer

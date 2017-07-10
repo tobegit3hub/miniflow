@@ -33,12 +33,12 @@ tf.local_variables_initialize
 """
 
 # TODO: Need to import all after installation
-import graph
-import session
-import ops
-import optimizer
-import train
-import webhdfs
+from . import graph
+from . import session
+from . import ops
+from . import optimizer
+from . import train
+from . import webhdfs
 
 int32 = int
 float32 = float

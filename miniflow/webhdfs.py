@@ -21,18 +21,19 @@ Access HDFS weith WebHDFs. Need to enable webhdfs in hdfs-site.xml.
 """
 
 import os
-import httplib
-import urlparse
 import logging
+# TODO: Not compatible for python 3
+# import urlparse
+# import httplib
 
 logger = logging.getLogger(name="webhdfs")
 
 
 class Webhdfs(object):
   """
-    The client to access WebHDFS. More usage refer to
-    https://github.com/drelu/webhdfs-py/blob/master/webhdfs/webhdfs.py.
-    """
+  The client to access WebHDFS. More usage refer to
+  https://github.com/drelu/webhdfs-py/blob/master/webhdfs/webhdfs.py.
+  """
 
   def __init__(self, namenode_host, namenode_port, username, timeout=60):
     self._namenode_host = namenode_host
@@ -41,6 +42,7 @@ class Webhdfs(object):
     self._timeout = timeout
     self._webhdfs_prefix = "/webhdfs/v1"
 
+  """
   def get(self, source_path):
     if os.path.isabs(source_path) == False:
       raise Exception("Only absolute paths supported: %s" % source_path)
@@ -76,6 +78,7 @@ class Webhdfs(object):
 
     httpClient.close()
     return data
+    """
 
 
 def test_Webhdfs():
