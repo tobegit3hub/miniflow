@@ -32,13 +32,14 @@ class Op(object):
   """The basic class for all operation."""
 
   def __init__(self, name="Op"):
-    self._name = name
+    # Be compatiable with TensorFlow to remove underline
+    self.name = name
 
   def get_name(self):
-    return self._name
+    return self.name
 
   def set_name(self, name):
-    self._name = name
+    self.name = name
 
   @abstractmethod
   def forward(self):
@@ -158,7 +159,7 @@ class VariableOp(Op):
     if partial_derivative_opname is None:
       grad = 1
     else:
-      if self._name == partial_derivative_opname:
+      if self.name == partial_derivative_opname:
         # Specify to compute this derivative
         grad = 1
       else:
@@ -558,3 +559,11 @@ class LocalVariablesInitializerOp(Op):
 
   def grad(self):
     raise NotImplementedError
+
+
+
+def get_variable(self, name, shape=None, dtype=None, initializer=None, regularizer=None, reuse=None, trainable=True):
+  _graph = graph.get_default_graph()
+
+
+  return

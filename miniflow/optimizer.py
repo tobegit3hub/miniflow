@@ -37,7 +37,7 @@ class OptimizerMinimizeOp(ops.Op):
 
 class Optimizer(object):
   def __init__(self, name="Optimizer"):
-    self._name = name
+    self.name = name
 
   def minimize(self, loss):
     pass
@@ -49,10 +49,10 @@ class Optimizer(object):
     pass
 
   def get_name(self):
-    return self._name
+    return self.name
 
   def set_name(self, name):
-    self._name = name
+    self.name = name
 
 
 class GradientDescentOptimizer(Optimizer):
