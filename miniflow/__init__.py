@@ -30,6 +30,7 @@ tf.divide
 tf.square
 tf.global_variables_initializer
 tf.local_variables_initialize
+tf.get_variable
 """
 
 # TODO: Need to import all after installation
@@ -58,3 +59,4 @@ divide = ops.DivideOp
 square = ops.SquareOp
 global_variables_initializer = ops.GlobalVariablesInitializerOp
 local_variables_initializer = ops.LocalVariablesInitializerOp
+get_variable = ops.get_variable

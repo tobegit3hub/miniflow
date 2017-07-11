@@ -19,7 +19,8 @@ import math
 import os
 import sys
 
-from . import graph
+#from . import graph
+import graph
 
 # Enable swig by environment variable
 if "ENABLE_SWIG_OP" in os.environ:
@@ -561,9 +562,19 @@ class LocalVariablesInitializerOp(Op):
     raise NotImplementedError
 
 
-
-def get_variable(self, name, shape=None, dtype=None, initializer=None, regularizer=None, reuse=None, trainable=True):
+def get_variable(name="Variable",
+                 value=None,
+                 shape=None,
+                 dtype=None,
+                 initializer=None,
+                 regularizer=None,
+                 reuse=None,
+                 trainable=True):
+  # TODO: Support default graph only
   _graph = graph.get_default_graph()
 
-
-  return
+  if name in _graph.get_name_op_map():
+    return _graph.get_name_op_map()[name]
+  else:
+    variable = VariableOp(value=value, name=name)
+    return variable

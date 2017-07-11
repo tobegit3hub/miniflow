@@ -35,12 +35,11 @@ class Graph(object):
       self._trainable_variables_collection[key] = value
 
   def get_unique_name(self, original_name):
+    unique_name = original_name
     index = 0
-    unique_name = "{}_{}".format(original_name, index)
-
     while unique_name in self._name_op_map.keys():
-      index += 1
       unique_name = "{}_{}".format(original_name, index)
+      index += 1
 
     return unique_name
 
