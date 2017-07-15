@@ -15,9 +15,11 @@
 import unittest
 
 from ops import Op
+from ops import ConstantOp
 from ops import VariableOp
 from ops import PlaceholderOp
 from ops import SquareOp
+from ops import DivideOp
 
 
 class OpTest(unittest.TestCase):
@@ -61,6 +63,30 @@ class SquareOpTest(unittest.TestCase):
                                                 loss.forward(),
                                                 loss.grad(b.get_name())))  # 74.0
     """
+
+
+class DivideOpTest(unittest.TestCase):
+  def test_grad(self):
+    # y = x / 20
+    a = VariableOp(1)
+    b = ConstantOp(20)
+    c = a / b
+    result = c.grad(a.get_name())
+    self.assertEqual(result, float(1) / 20)
+
+    # y = x / 20
+    a = VariableOp(10)
+    b = ConstantOp(20)
+    c = a / b
+    result = c.grad(a.get_name())
+    self.assertEqual(result, float(1) / 20)
+
+    # y = 10 / x
+    a = ConstantOp(10)
+    b = VariableOp(20)
+    c = a / b
+    result = c.grad(b.get_name())
+    self.assertEqual(result, -float(10) / 400)
 
 
 if __name__ == '__main__':

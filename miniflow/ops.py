@@ -494,8 +494,51 @@ class DivideOp(Op):
     return result
 
   def grad(self, partial_derivative_opname=None):
-    result = self._op1.grad(partial_derivative_opname) / self._op2.grad(
-        partial_derivative_opname)
+    op1_value = self._op1.forward()
+    op2_value = self._op2.forward()
+
+    if isinstance(self._op1, PlaceholderOp) or isinstance(
+        self._op1, ConstantOp):
+      # op1 is the coefficient of this formula
+      op1_grad = self._op1.forward()
+
+      if isinstance(self._op2, PlaceholderOp) or isinstance(
+          self._op2, ConstantOp):
+        # two elements are both constant values
+        op2_grad = 0
+      else:
+        # op2 may has VariableOp
+        op2_grad = self._op2.grad(partial_derivative_opname)
+
+      # Reciprocal rule, refer to https://en.wikipedia.org/wiki/Reciprocal_rule
+      #import ipdb;ipdb.set_trace()
+      result = self._op1.forward() * -float(op2_grad) / math.pow(op2_value, 2)
+    elif isinstance(self._op2, PlaceholderOp) or isinstance(
+        self._op2, ConstantOp):
+      # op2 is the coefficient of this formula
+      op2_grad = self._op2.forward()
+
+      # op1 may has VariableOp
+      op1_grad = self._op1.grad(partial_derivative_opname)
+      result = float(op1_grad) / op2_value
+
+    else:
+      # op1 and op2 may has VariableOp
+      #logging.error(
+      #  "Not support complex formula which has divided by VariableOp")
+      #raise NotImplementedError
+
+      op1_grad = self._op1.grad(partial_derivative_opname)
+      op2_grad = self._op2.grad(partial_derivative_opname)
+
+      if op2_grad != 0:
+        # Quotient rule, refer to https://en.wikipedia.org/wiki/Quotient_rule
+        result = (op1_grad * op2_value - op1_value * op2_grad) / math.pow(
+            op2_grad, 2)
+      else:
+        # TODO: Compute when division by zero
+        raise NotImplementedError
+
     return result
 
 
