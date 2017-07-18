@@ -19,7 +19,7 @@ except ImportError:
 
 setup(
     name="miniflow",
-    version="0.2.8",
+    version="0.2.9",
     author="tobe",
     license="Apache License",
     description="Minimal implementation of TensorFlow",

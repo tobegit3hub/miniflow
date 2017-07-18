@@ -531,10 +531,10 @@ class DivideOp(Op):
       op1_grad = self._op1.grad(partial_derivative_opname)
       op2_grad = self._op2.grad(partial_derivative_opname)
 
-      if op2_grad != 0:
+      if op2_value != 0:
         # Quotient rule, refer to https://en.wikipedia.org/wiki/Quotient_rule
         result = (op1_grad * op2_value - op1_value * op2_grad) / math.pow(
-            op2_grad, 2)
+            op2_value, 2)
       else:
         # TODO: Compute when division by zero
         raise NotImplementedError
