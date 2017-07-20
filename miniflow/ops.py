@@ -387,7 +387,6 @@ class AddNOp(Op):
     return result
 
 
-# TODO: Can not support operations like "x * x", only "x * 3"
 class MultipleOp(Op):
   def __init__(self, input1, input2, name="Multiple"):
     super(MultipleOp, self).__init__(name)
@@ -410,6 +409,8 @@ class MultipleOp(Op):
     return result
 
   def grad(self, partial_derivative_opname=None):
+    op1_value = self._op1.forward()
+    op2_value = self._op2.forward()
 
     if isinstance(self._op1, PlaceholderOp) or isinstance(
         self._op1, ConstantOp):
@@ -424,6 +425,7 @@ class MultipleOp(Op):
         # op2 may has VariableOp
         op2_grad = self._op2.grad(partial_derivative_opname)
 
+      result = op1_grad * op2_grad
     elif isinstance(self._op2, PlaceholderOp) or isinstance(
         self._op2, ConstantOp):
       # op2 is the coefficient of this formula
@@ -432,13 +434,18 @@ class MultipleOp(Op):
       # op1 may has VariableOp
       op1_grad = self._op1.grad(partial_derivative_opname)
 
+      result = op1_grad * op2_grad
     else:
       # op1 and op2 may has VariableOp
-      logging.error(
-          "Not support complex formula which has multiple VariableOp")
-      raise NotImplementedError
+      # Refer to https://en.wikipedia.org/wiki/Product_rule
+      #logging.error(
+      #    "Not support complex formula which has multiple VariableOp")
+      #raise NotImplementedError
 
-    result = op1_grad * op2_grad
+      op1_grad = self._op1.grad(partial_derivative_opname)
+      op2_grad = self._op2.grad(partial_derivative_opname)
+      result = op1_grad * op2_value + op1_value * op2_grad
+
     return result
 
 
