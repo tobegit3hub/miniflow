@@ -19,8 +19,8 @@ import math
 import os
 import sys
 
-#from . import graph
-import graph
+from . import graph
+# import graph
 
 # Enable swig by environment variable
 if "ENABLE_SWIG_OP" in os.environ:
@@ -69,6 +69,9 @@ class Op(object):
     return self.__mul__(other)
 
   def __div__(self, other):
+    return DivideOp(self, other)
+
+  def __truediv__(self, other):
     return DivideOp(self, other)
 
   def __rdiv__(self, other):
